@@ -33,7 +33,6 @@
 		071F3CB910FBAB5900D0A7B6 /* License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 071F3CB810FBAB5900D0A7B6 /* License.txt */; };
 		072161EB11D1F6BD009CC871 /* CPTAnnotationHostLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 072161E911D1F6BD009CC871 /* CPTAnnotationHostLayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		072161EC11D1F6BD009CC871 /* CPTAnnotationHostLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 072161EA11D1F6BD009CC871 /* CPTAnnotationHostLayer.m */; };
-		0730F67C1094995000E95162 /* CorePlot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* CorePlot.framework */; };
 		07321BC10F37370D00F423D8 /* CPTExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 07321BBF0F37370D00F423D8 /* CPTExceptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		07321BC20F37370D00F423D8 /* CPTExceptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 07321BC00F37370D00F423D8 /* CPTExceptions.m */; };
 		07321BC60F37382D00F423D8 /* CPTUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 07321BC40F37382D00F423D8 /* CPTUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -160,8 +159,6 @@
 		C32EE1C113EC4BE700038266 /* CPTMutableShadow.h in Headers */ = {isa = PBXBuildFile; fileRef = C32EE1BF13EC4BE700038266 /* CPTMutableShadow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C32EE1C213EC4BE700038266 /* CPTMutableShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = C32EE1C013EC4BE700038266 /* CPTMutableShadow.m */; };
 		C3392A381225F667008DA6BD /* CPTNumericData+TypeConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = C3392A371225F667008DA6BD /* CPTNumericData+TypeConversion.m */; };
-		C3392A481225FB68008DA6BD /* CPTMutableNumericDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CADDC611B167AD00D36017 /* CPTMutableNumericDataTests.m */; };
-		C3392A491225FB69008DA6BD /* CPTNumericDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C97EF06104D80D400B554F9 /* CPTNumericDataTests.m */; };
 		C3408C3E15FC1C3E004F1D70 /* _CPTBorderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = C3408C3C15FC1C3E004F1D70 /* _CPTBorderLayer.h */; settings = {ATTRIBUTES = (); }; };
 		C3408C3F15FC1C3E004F1D70 /* _CPTBorderLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C3408C3D15FC1C3E004F1D70 /* _CPTBorderLayer.m */; };
 		C34260200FAE096D00072842 /* _CPTFillImage.h in Headers */ = {isa = PBXBuildFile; fileRef = C34260180FAE096C00072842 /* _CPTFillImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -182,10 +179,6 @@
 		C34AFE96110224630041675A /* CPTAxisLabelGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C032C710B8DEDC003A11B6 /* CPTAxisLabelGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C34AFE98110224710041675A /* CPTGridLines.h in Headers */ = {isa = PBXBuildFile; fileRef = C32B391610AA4C78000470D4 /* CPTGridLines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C34AFE9B1102248D0041675A /* CPTPlotArea.h in Headers */ = {isa = PBXBuildFile; fileRef = C34BF5BA10A67633007F0894 /* CPTPlotArea.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C34F0D58121CB3EC0020FDD3 /* CPTTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 0730F64D109494D100E95162 /* CPTTestCase.m */; };
-		C34F0D59121CB3F00020FDD3 /* CPTDataSourceTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C9A745E0FB24C7200918464 /* CPTDataSourceTestCase.m */; };
-		C365E19B1973193A0096AAE1 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C365E19A1973193A0096AAE1 /* XCTest.framework */; };
-		C36E89BA11EE7F97003DE309 /* CPTPlotRangeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C36E89B911EE7F97003DE309 /* CPTPlotRangeTests.m */; };
 		C3791D09191D4C4C001EC514 /* CPTImagePlatformSpecific.m in Sources */ = {isa = PBXBuildFile; fileRef = C3791D07191D4C4C001EC514 /* CPTImagePlatformSpecific.m */; };
 		C38DD49311A04B7A002A68E7 /* CPTGridLineGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = C38DD49111A04B7A002A68E7 /* CPTGridLineGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C38DD49411A04B7A002A68E7 /* CPTGridLineGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = C38DD49211A04B7A002A68E7 /* CPTGridLineGroup.m */; };
@@ -197,8 +190,6 @@
 		C3A695E6146A19BC00AF5653 /* CPTMutablePlotRange.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A695E4146A19BC00AF5653 /* CPTMutablePlotRange.m */; };
 		C3AFC9D10FB62969005DFFDC /* CPTImage.h in Headers */ = {isa = PBXBuildFile; fileRef = C3AFC9CF0FB62969005DFFDC /* CPTImage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3BB7D281633408200BC9515 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BB7D1416322F7E00BC9515 /* Accelerate.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		C3BFFD1112274CB500DE22AC /* CPTNumericDataTypeConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C97EF08104D80D400B554F9 /* CPTNumericDataTypeConversionTests.m */; };
-		C3C1C0801790D3B400E8B1B7 /* CPTLayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3C1C07F1790D3B400E8B1B7 /* CPTLayerTests.m */; };
 		C3C9CB0E165DB4D500739006 /* CPTAnimationOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9CB0C165DB4D500739006 /* CPTAnimationOperation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3C9CB0F165DB4D500739006 /* CPTAnimationOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = C3C9CB0D165DB4D500739006 /* CPTAnimationOperation.m */; };
 		C3C9CB13165DB50300739006 /* CPTAnimationPeriod.h in Headers */ = {isa = PBXBuildFile; fileRef = C3C9CB11165DB50300739006 /* CPTAnimationPeriod.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -207,7 +198,6 @@
 		C3C9CB18165DB52C00739006 /* _CPTAnimationCGFloatPeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = C3C9CB16165DB52C00739006 /* _CPTAnimationCGFloatPeriod.m */; };
 		C3CAFB261229E41F00F5C989 /* CPTMutableNumericData+TypeConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CAFB241229E41F00F5C989 /* CPTMutableNumericData+TypeConversion.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3CAFB6B1229F5FB00F5C989 /* CPTMutableNumericData+TypeConversion.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CAFB251229E41F00F5C989 /* CPTMutableNumericData+TypeConversion.m */; };
-		C3CB561C122A9E9F00FBFB61 /* CPTMutableNumericDataTypeConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CB561B122A9E9F00FBFB61 /* CPTMutableNumericDataTypeConversionTests.m */; };
 		C3CCA03D13E8D85900CE6DB1 /* _CPTConstraintsFixed.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CCA03913E8D85800CE6DB1 /* _CPTConstraintsFixed.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C3CCA03E13E8D85900CE6DB1 /* _CPTConstraintsFixed.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CCA03A13E8D85800CE6DB1 /* _CPTConstraintsFixed.m */; };
 		C3CCA03F13E8D85900CE6DB1 /* _CPTConstraintsRelative.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CCA03B13E8D85800CE6DB1 /* _CPTConstraintsRelative.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -218,22 +208,6 @@
 		C3D375F116594755003CC156 /* _CPTAnimationTimingFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = C3C2847416585085006BA43C /* _CPTAnimationTimingFunctions.m */; };
 		C3D3AD2D13DF8DCE0004EA73 /* CPTLineCap.h in Headers */ = {isa = PBXBuildFile; fileRef = C3D3AD2B13DF8DCE0004EA73 /* CPTLineCap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3D3AD2E13DF8DCE0004EA73 /* CPTLineCap.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D3AD2C13DF8DCE0004EA73 /* CPTLineCap.m */; };
-		C3D68A5B1220B27D00EB4863 /* CPTUtilitiesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD7E9630F4B625900F9BCBB /* CPTUtilitiesTests.m */; };
-		C3D68A5C1220B29100EB4863 /* CPTTextStyleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C36468A90FE5533F0064B186 /* CPTTextStyleTests.m */; };
-		C3D68A5E1220B2AC00EB4863 /* CPTXYPlotSpaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C422A630FB1FCD5000CAA43 /* CPTXYPlotSpaceTests.m */; };
-		C3D68A5F1220B2B400EB4863 /* CPTScatterPlotTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 07FEBD61110B7E8B00E44D37 /* CPTScatterPlotTests.m */; };
-		C3D68A601220B2BE00EB4863 /* CPTAxisLabelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4CD23FFB0FFBE78400ADD2E2 /* CPTAxisLabelTests.m */; };
-		C3D68A611220B2C800EB4863 /* CPTDarkGradientThemeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FE6051100F27EF00895A91 /* CPTDarkGradientThemeTests.m */; };
-		C3D68A621220B2C900EB4863 /* CPTDerivedXYGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = E1FE611A100F3FB700895A91 /* CPTDerivedXYGraph.m */; };
-		C3D68A631220B2CC00EB4863 /* CPTThemeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E1620CBD100F03A100A84E77 /* CPTThemeTests.m */; };
-		C3D979A413D2136700145DFF /* CPTPlotSpaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979A313D2136600145DFF /* CPTPlotSpaceTests.m */; };
-		C3D979A913D2328000145DFF /* CPTTimeFormatterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979A813D2328000145DFF /* CPTTimeFormatterTests.m */; };
-		C3D979AC13D2332500145DFF /* CPTColorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979AB13D2332500145DFF /* CPTColorTests.m */; };
-		C3D979AF13D2337E00145DFF /* CPTColorSpaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979AE13D2337E00145DFF /* CPTColorSpaceTests.m */; };
-		C3D979B213D233C100145DFF /* CPTGradientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979B113D233C000145DFF /* CPTGradientTests.m */; };
-		C3D979B513D2340000145DFF /* CPTImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979B413D2340000145DFF /* CPTImageTests.m */; };
-		C3D979B813D2344100145DFF /* CPTLineStyleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979B713D2344000145DFF /* CPTLineStyleTests.m */; };
-		C3D979BB13D2347400145DFF /* CPTFillTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C3D979BA13D2347300145DFF /* CPTFillTests.m */; };
 		C3DA34CC107AD7710051DA02 /* _CPTXYTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = C3DA34CA107AD7710051DA02 /* _CPTXYTheme.m */; };
 		C3DA34CD107AD7710051DA02 /* _CPTXYTheme.h in Headers */ = {isa = PBXBuildFile; fileRef = C3DA34CB107AD7710051DA02 /* _CPTXYTheme.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C3F31DE91045EB470058520A /* CPTPlotGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = C3F31DE71045EB470058520A /* CPTPlotGroup.m */; };
@@ -243,16 +217,6 @@
 		D0C0477D12D6560900DA8047 /* CPTRangePlot.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C0477B12D6560900DA8047 /* CPTRangePlot.m */; };
 		D0C0477E12D6560900DA8047 /* CPTRangePlot.h in Headers */ = {isa = PBXBuildFile; fileRef = D0C0477C12D6560900DA8047 /* CPTRangePlot.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		0730F6211094932900E95162 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = CorePlot;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		070064E7111F2BAA003DE087 /* CPTConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTConstraints.h; sourceTree = "<group>"; };
@@ -267,7 +231,6 @@
 		071F3CB810FBAB5900D0A7B6 /* License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = License.txt; path = ../License.txt; sourceTree = SOURCE_ROOT; };
 		072161E911D1F6BD009CC871 /* CPTAnnotationHostLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTAnnotationHostLayer.h; sourceTree = "<group>"; };
 		072161EA11D1F6BD009CC871 /* CPTAnnotationHostLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTAnnotationHostLayer.m; sourceTree = "<group>"; };
-		0730F600109492D800E95162 /* UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0730F601109492D800E95162 /* UnitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnitTests-Info.plist"; sourceTree = "<group>"; };
 		0730F64C109494D100E95162 /* CPTTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTTestCase.h; sourceTree = "<group>"; };
 		0730F64D109494D100E95162 /* CPTTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTTestCase.m; sourceTree = "<group>"; };
@@ -519,15 +482,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0730F5FD109492D800E95162 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C365E19B1973193A0096AAE1 /* XCTest.framework in Frameworks */,
-				0730F67C1094995000E95162 /* CorePlot.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -545,7 +499,6 @@
 			isa = PBXGroup;
 			children = (
 				8DC2EF5B0486A6940098B216 /* CorePlot.framework */,
-				0730F600109492D800E95162 /* UnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1298,25 +1251,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0730F5FF109492D800E95162 /* UnitTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0730F604109492D900E95162 /* Build configuration list for PBXNativeTarget "UnitTests" */;
-			buildPhases = (
-				0730F5FB109492D800E95162 /* Resources */,
-				0730F5FC109492D800E95162 /* Sources */,
-				0730F5FD109492D800E95162 /* Frameworks */,
-				0730F5FE109492D800E95162 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0730F6221094932900E95162 /* PBXTargetDependency */,
-			);
-			name = UnitTests;
-			productName = UnitTests;
-			productReference = 0730F600109492D800E95162 /* UnitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		8DC2EF4F0486A6940098B216 /* CorePlot */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CorePlot" */;
@@ -1361,20 +1295,12 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* CorePlot */,
-				0730F5FF109492D800E95162 /* UnitTests */,
 				9021E49E0FC5C9DC00443472 /* Documentation */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0730F5FB109492D800E95162 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1387,19 +1313,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0730F5FE109492D800E95162 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
 		9021E49D0FC5C9DC00443472 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1416,37 +1329,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0730F5FC109492D800E95162 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C36E89BA11EE7F97003DE309 /* CPTPlotRangeTests.m in Sources */,
-				C34F0D58121CB3EC0020FDD3 /* CPTTestCase.m in Sources */,
-				C34F0D59121CB3F00020FDD3 /* CPTDataSourceTestCase.m in Sources */,
-				C3D68A5B1220B27D00EB4863 /* CPTUtilitiesTests.m in Sources */,
-				C3D68A5C1220B29100EB4863 /* CPTTextStyleTests.m in Sources */,
-				C3D68A5E1220B2AC00EB4863 /* CPTXYPlotSpaceTests.m in Sources */,
-				C3D68A5F1220B2B400EB4863 /* CPTScatterPlotTests.m in Sources */,
-				C3D68A601220B2BE00EB4863 /* CPTAxisLabelTests.m in Sources */,
-				C3D68A611220B2C800EB4863 /* CPTDarkGradientThemeTests.m in Sources */,
-				C3D68A621220B2C900EB4863 /* CPTDerivedXYGraph.m in Sources */,
-				C3D68A631220B2CC00EB4863 /* CPTThemeTests.m in Sources */,
-				C3392A481225FB68008DA6BD /* CPTMutableNumericDataTests.m in Sources */,
-				C3392A491225FB69008DA6BD /* CPTNumericDataTests.m in Sources */,
-				C3BFFD1112274CB500DE22AC /* CPTNumericDataTypeConversionTests.m in Sources */,
-				C3CB561C122A9E9F00FBFB61 /* CPTMutableNumericDataTypeConversionTests.m in Sources */,
-				C3D979A413D2136700145DFF /* CPTPlotSpaceTests.m in Sources */,
-				C3D979A913D2328000145DFF /* CPTTimeFormatterTests.m in Sources */,
-				C3D979AC13D2332500145DFF /* CPTColorTests.m in Sources */,
-				C3D979AF13D2337E00145DFF /* CPTColorSpaceTests.m in Sources */,
-				C3D979B213D233C100145DFF /* CPTGradientTests.m in Sources */,
-				C3D979B513D2340000145DFF /* CPTImageTests.m in Sources */,
-				C3D979B813D2344100145DFF /* CPTLineStyleTests.m in Sources */,
-				C3D979BB13D2347400145DFF /* CPTFillTests.m in Sources */,
-				C3C1C0801790D3B400E8B1B7 /* CPTLayerTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1551,14 +1433,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		0730F6221094932900E95162 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8DC2EF4F0486A6940098B216 /* CorePlot */;
-			targetProxy = 0730F6211094932900E95162 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -1579,62 +1453,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		0730F602109492D900E95162 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
-				INFOPLIST_FILE = "UnitTests-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Cocoa,
-				);
-				PRODUCT_NAME = UnitTests;
-			};
-			name = Debug;
-		};
-		0730F603109492D900E95162 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
-				INFOPLIST_FILE = "UnitTests-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Cocoa,
-				);
-				PRODUCT_NAME = UnitTests;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1678,6 +1496,7 @@
 				GCC_PREFIX_HEADER = CorePlot_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "@loader_path/../Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = CorePlot;
 				SKIP_INSTALL = YES;
 				"VALID_ARCHS[sdk=*]" = "i386 x86_64";
@@ -1846,15 +1665,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0730F604109492D900E95162 /* Build configuration list for PBXNativeTarget "UnitTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0730F602109492D900E95162 /* Debug */,
-				0730F603109492D900E95162 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "CorePlot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

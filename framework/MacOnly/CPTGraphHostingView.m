@@ -295,74 +295,95 @@ static void *const CPTGraphHostingViewKVOContext = (void *)&CPTGraphHostingViewK
     BOOL handled       = NO;
 
     if ( theGraph ) {
-        switch ( theEvent.phase ) {
-            case NSEventPhaseBegan: // Trackpad with no momentum scrolling. Fingers moved on trackpad.
-            {
-                self.locationInWindow = theEvent.locationInWindow;
-                self.scrollOffset     = CGPointZero;
 
-                CGPoint pointOfMouseDown   = NSPointToCGPoint([self convertPoint:self.locationInWindow fromView:nil]);
-                CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouseDown toLayer:theGraph];
-                handled = [theGraph pointingDeviceDownEvent:theEvent atPoint:pointInHostedGraph];
-            }
-            // Fall through
-
-            case NSEventPhaseChanged:
-            {
-                CGPoint offset = self.scrollOffset;
-                offset.x         += theEvent.scrollingDeltaX;
-                offset.y         -= theEvent.scrollingDeltaY;
-                self.scrollOffset = offset;
-
-                NSPoint scrolledPointOfMouse = self.locationInWindow;
-                scrolledPointOfMouse.x += offset.x;
-                scrolledPointOfMouse.y += offset.y;
-
-                CGPoint pointOfMouseDrag   = NSPointToCGPoint([self convertPoint:scrolledPointOfMouse fromView:nil]);
-                CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouseDrag toLayer:theGraph];
-                handled = handled || [theGraph pointingDeviceDraggedEvent:theEvent atPoint:pointInHostedGraph];
-            }
-            break;
-
-            case NSEventPhaseEnded:
-            {
-                CGPoint offset = self.scrollOffset;
-
-                NSPoint scrolledPointOfMouse = self.locationInWindow;
-                scrolledPointOfMouse.x += offset.x;
-                scrolledPointOfMouse.y += offset.y;
-
-                CGPoint pointOfMouseUp     = NSPointToCGPoint([self convertPoint:scrolledPointOfMouse fromView:nil]);
-                CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouseUp toLayer:theGraph];
-                handled = [theGraph pointingDeviceUpEvent:theEvent atPoint:pointInHostedGraph];
-            }
-            break;
-
-            case NSEventPhaseNone:
-                if ( theEvent.momentumPhase == NSEventPhaseNone ) {
-                    // Mouse wheel
-                    CGPoint startLocation      = theEvent.locationInWindow;
-                    CGPoint pointOfMouse       = NSPointToCGPoint([self convertPoint:startLocation fromView:nil]);
-                    CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouse toLayer:theGraph];
-
-                    CGPoint scrolledLocationInWindow = startLocation;
-                    if ( theEvent.hasPreciseScrollingDeltas ) {
-                        scrolledLocationInWindow.x += theEvent.scrollingDeltaX;
-                        scrolledLocationInWindow.y -= theEvent.scrollingDeltaY;
-                    }
-                    else {
-                        scrolledLocationInWindow.x += theEvent.scrollingDeltaX * CPTFloat(10.0);
-                        scrolledLocationInWindow.y -= theEvent.scrollingDeltaY * CPTFloat(10.0);
-                    }
-                    CGPoint scrolledPointOfMouse       = NSPointToCGPoint([self convertPoint:scrolledLocationInWindow fromView:nil]);
-                    CGPoint scrolledPointInHostedGraph = [self.layer convertPoint:scrolledPointOfMouse toLayer:theGraph];
-
-                    handled = [theGraph scrollWheelEvent:theEvent fromPoint:pointInHostedGraph toPoint:scrolledPointInHostedGraph];
+        // Detect trackpad, in which case it's a scroll.
+        if (([theEvent momentumPhase] != NSEventPhaseNone) || [theEvent phase] != NSEventPhaseNone)
+        {
+        
+            switch ( theEvent.phase ) {
+                case NSEventPhaseBegan: // Trackpad with no momentum scrolling. Fingers moved on trackpad.
+                {
+                    self.locationInWindow = theEvent.locationInWindow;
+                    self.scrollOffset     = CGPointZero;
+                    
+                    CGPoint pointOfMouseDown   = NSPointToCGPoint([self convertPoint:self.locationInWindow fromView:nil]);
+                    CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouseDown toLayer:theGraph];
+                    handled = [theGraph pointingDeviceDownEvent:theEvent atPoint:pointInHostedGraph];
                 }
-                break;
-
-            default:
-                break;
+                    // Fall through
+                    
+                case NSEventPhaseChanged:
+                {
+                    CGPoint offset = self.scrollOffset;
+                    offset.x         += theEvent.scrollingDeltaX;
+                    offset.y         -= theEvent.scrollingDeltaY;
+                    self.scrollOffset = offset;
+                    
+                    NSPoint scrolledPointOfMouse = self.locationInWindow;
+                    scrolledPointOfMouse.x += offset.x;
+                    scrolledPointOfMouse.y += offset.y;
+                    
+                    CGPoint pointOfMouseDrag   = NSPointToCGPoint([self convertPoint:scrolledPointOfMouse fromView:nil]);
+                    CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouseDrag toLayer:theGraph];
+                    handled = handled || [theGraph pointingDeviceDraggedEvent:theEvent atPoint:pointInHostedGraph];
+                }
+                    break;
+                    
+                case NSEventPhaseEnded:
+                {
+                    CGPoint offset = self.scrollOffset;
+                    
+                    NSPoint scrolledPointOfMouse = self.locationInWindow;
+                    scrolledPointOfMouse.x += offset.x;
+                    scrolledPointOfMouse.y += offset.y;
+                    
+                    CGPoint pointOfMouseUp     = NSPointToCGPoint([self convertPoint:scrolledPointOfMouse fromView:nil]);
+                    CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouseUp toLayer:theGraph];
+                    handled = [theGraph pointingDeviceUpEvent:theEvent atPoint:pointInHostedGraph];
+                }
+                    break;
+                    
+                case NSEventPhaseNone:
+                    if ( theEvent.momentumPhase == NSEventPhaseNone ) {
+                        // Mouse wheel
+                        CGPoint startLocation      = theEvent.locationInWindow;
+                        CGPoint pointOfMouse       = NSPointToCGPoint([self convertPoint:startLocation fromView:nil]);
+                        CGPoint pointInHostedGraph = [self.layer convertPoint:pointOfMouse toLayer:theGraph];
+                        
+                        CGPoint scrolledLocationInWindow = startLocation;
+                        if ( theEvent.hasPreciseScrollingDeltas ) {
+                            scrolledLocationInWindow.x += theEvent.scrollingDeltaX;
+                            scrolledLocationInWindow.y -= theEvent.scrollingDeltaY;
+                        }
+                        else {
+                            scrolledLocationInWindow.x += theEvent.scrollingDeltaX * CPTFloat(10.0);
+                            scrolledLocationInWindow.y -= theEvent.scrollingDeltaY * CPTFloat(10.0);
+                        }
+                        CGPoint scrolledPointOfMouse       = NSPointToCGPoint([self convertPoint:scrolledLocationInWindow fromView:nil]);
+                        CGPoint scrolledPointInHostedGraph = [self.layer convertPoint:scrolledPointOfMouse toLayer:theGraph];
+                        
+                        handled = [theGraph scrollWheelEvent:theEvent fromPoint:pointInHostedGraph toPoint:scrolledPointInHostedGraph];
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+        else // mouse wheel
+        {
+            CGPoint pointOfMagnification = NSPointToCGPoint([self convertPoint:[theEvent locationInWindow] fromView:nil]);
+            CGPoint pointInHostedGraph   = [self.layer convertPoint:pointOfMagnification toLayer:theGraph];
+            CGPoint pointInPlotArea      = [theGraph convertPoint:pointInHostedGraph toLayer:theGraph.plotAreaFrame.plotArea];
+            
+            CGFloat scale = 1.0 + 0.1 * theEvent.scrollingDeltaY; // theEvent.magnification + CPTFloat(1.0);
+            
+            for ( CPTPlotSpace *space in theGraph.allPlotSpaces ) {
+                if ( space.allowsUserInteraction ) {
+                    [space scaleBy:scale aboutPoint:pointInPlotArea];
+                    handled = YES;
+                }
+            }
         }
     }
 
