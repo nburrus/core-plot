@@ -7,14 +7,15 @@
 
 -(void)testNilShapeGivesSingleDimension
 {
-    CPTNumericData *nd = [[CPTNumericData alloc] initWithData:[NSMutableData dataWithLength:1 * sizeof(float)]
-                                               dataTypeString:@"=f4"
-                                                        shape:nil];
+    NSMutableData *data = [NSMutableData dataWithLength:1 * sizeof(float)];
+    CPTNumericData *nd  = [[CPTNumericData alloc] initWithData:data
+                                                dataTypeString:@"=f4"
+                                                         shape:nil];
     NSUInteger actual   = nd.numberOfDimensions;
     NSUInteger expected = 1;
 
     XCTAssertEqual(actual, expected, @"numberOfDimensions == 1");
-    expected = [nd.shape count];
+    expected = nd.shape.count;
     XCTAssertEqual(actual, expected, @"numberOfDimensions == 1");
 }
 
@@ -24,9 +25,10 @@
 
     NSUInteger nElems = 2 * 2 * 2;
 
-    CPTNumericData *nd = [[CPTNumericData alloc] initWithData:[NSMutableData dataWithLength:nElems * sizeof(float)]
-                                                     dataType:CPTDataType( CPTFloatingPointDataType, sizeof(float), NSHostByteOrder() )
-                                                        shape:shape];
+    NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
+    CPTNumericData *nd  = [[CPTNumericData alloc] initWithData:data
+                                                      dataType:CPTDataType( CPTFloatingPointDataType, sizeof(float), NSHostByteOrder() )
+                                                         shape:shape];
 
     XCTAssertEqual(nd.numberOfDimensions, nd.shape.count, @"numberOfDimensions == shape.count == 3");
 }
@@ -35,15 +37,16 @@
 {
     NSUInteger nElems = 13;
 
-    CPTNumericData *nd = [[CPTNumericData alloc] initWithData:[NSMutableData dataWithLength:nElems * sizeof(float)]
-                                               dataTypeString:@"=f4"
-                                                        shape:nil];
+    NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
+    CPTNumericData *nd  = [[CPTNumericData alloc] initWithData:data
+                                                dataTypeString:@"=f4"
+                                                         shape:nil];
 
     XCTAssertEqual(nd.numberOfDimensions, (NSUInteger)1, @"numberOfDimensions == 1");
 
     NSUInteger prod = 1;
     for ( NSNumber *num in nd.shape ) {
-        prod *= [num unsignedIntValue];
+        prod *= num.unsignedIntegerValue;
     }
 
     XCTAssertEqual(prod, nElems, @"prod == nElems");
@@ -57,7 +60,9 @@
 
     CPTNumericData *testData = nil;
 
-    XCTAssertThrowsSpecificNamed(testData = [[CPTNumericData alloc] initWithData:[NSMutableData dataWithLength:nElems * sizeof(NSUInteger)]
+    NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(NSUInteger)];
+
+    XCTAssertThrowsSpecificNamed(testData = [[CPTNumericData alloc] initWithData:data
                                                                         dataType:CPTDataType( CPTUnsignedIntegerDataType, sizeof(NSUInteger), NSHostByteOrder() )
                                                                            shape:shape],
                                  NSException,
@@ -67,12 +72,13 @@
 
 -(void)testReturnsDataLength
 {
-    CPTNumericData *nd = [[CPTNumericData alloc] initWithData:[NSMutableData dataWithLength:10 * sizeof(float)]
-                                               dataTypeString:@"=f4"
-                                                        shape:nil];
+    NSMutableData *data = [NSMutableData dataWithLength:10 * sizeof(float)];
+    CPTNumericData *nd  = [[CPTNumericData alloc] initWithData:data
+                                                dataTypeString:@"=f4"
+                                                         shape:nil];
 
     NSUInteger expected = 10 * sizeof(float);
-    NSUInteger actual   = [nd.data length];
+    NSUInteger actual   = nd.data.length;
 
     XCTAssertEqual(expected, actual, @"data length");
 }
@@ -81,7 +87,7 @@
 {
     NSUInteger nElements = 10;
     NSMutableData *data  = [NSMutableData dataWithLength:nElements * sizeof(NSInteger)];
-    NSInteger *intData   = (NSInteger *)[data mutableBytes];
+    NSInteger *intData   = (NSInteger *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElements; i++ ) {
         intData[i] = (NSInteger)i;
@@ -100,7 +106,7 @@
 {
     NSUInteger nElems   = 10;
     NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
-    float *samples      = (float *)[data mutableBytes];
+    float *samples      = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         samples[i] = sinf(i);
@@ -110,7 +116,7 @@
                                                      dataType:CPTDataType( CPTFloatingPointDataType, sizeof(float), NSHostByteOrder() )
                                                         shape:nil];
 
-    CPTNumericData *nd2 = [NSUnarchiver unarchiveObjectWithData:[NSArchiver archivedDataWithRootObject:nd]];
+    CPTNumericData *nd2 = [self archiveRoundTrip:nd];
 
     XCTAssertTrue([nd.data isEqualToData:nd2.data], @"equal data");
 
@@ -127,7 +133,7 @@
 {
     NSUInteger nElems   = 10;
     NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
-    float *samples      = (float *)[data mutableBytes];
+    float *samples      = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         samples[i] = sinf(i);
@@ -137,7 +143,7 @@
                                                      dataType:CPTDataType( CPTFloatingPointDataType, sizeof(float), NSHostByteOrder() )
                                                         shape:nil];
 
-    CPTNumericData *nd2 = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:nd]];
+    CPTNumericData *nd2 = [self archiveRoundTrip:nd];
 
     XCTAssertTrue([nd.data isEqualToData:nd2.data], @"equal data");
 
@@ -154,7 +160,7 @@
 {
     NSUInteger nElems   = 10;
     NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
-    float *samples      = (float *)[data mutableBytes];
+    float *samples      = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         samples[i] = sinf(i);
@@ -168,7 +174,7 @@
 
     nElems = 10;
     data   = [NSMutableData dataWithLength:nElems * sizeof(char)];
-    char *charSamples = (char *)[data mutableBytes];
+    char *charSamples = (char *)data.mutableBytes;
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         charSamples[i] = (char)lrint(sin(i) * 100.0);
     }
@@ -184,7 +190,7 @@
 {
     NSUInteger nElems   = 10;
     NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
-    float *samples      = (float *)[data mutableBytes];
+    float *samples      = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         samples[i] = sinf(i);
@@ -203,7 +209,7 @@
 {
     NSUInteger numberOfSamples = 10;
     NSMutableData *data        = [NSMutableData dataWithLength:numberOfSamples * sizeof(float)];
-    float *samples             = (float *)[data mutableBytes];
+    float *samples             = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < numberOfSamples; i++ ) {
         samples[i] = sinf(i);
@@ -217,9 +223,9 @@
                                         sampleBytes:sizeof(double)
                                           byteOrder:NSHostByteOrder()];
 
-    const double *doubleSamples = (const double *)[dd.data bytes];
+    const double *doubleSamples = (const double *)dd.data.bytes;
     for ( NSUInteger i = 0; i < numberOfSamples; i++ ) {
-        XCTAssertTrue(samples[i] == doubleSamples[i], @"(float)%g != (double)%g", samples[i], doubleSamples[i]);
+        XCTAssertTrue( (double)samples[i] == doubleSamples[i], @"(float)%g != (double)%g", (double)samples[i], doubleSamples[i] );
     }
 }
 
@@ -227,7 +233,7 @@
 {
     NSUInteger nElems   = 10;
     NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
-    float *samples      = (float *)[data mutableBytes];
+    float *samples      = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         samples[i] = sinf(i);
@@ -237,9 +243,9 @@
                                                      dataType:CPTDataType( CPTFloatingPointDataType, sizeof(float), NSHostByteOrder() )
                                                         shape:nil];
 
-    XCTAssertEqual( ( (float *)[fd.data bytes] ) + 4, (float *)[fd samplePointer:4], @"%p,%p", samples + 4, (float *)[fd samplePointer:4] );
-    XCTAssertEqual( ( (float *)[fd.data bytes] ), (float *)[fd samplePointer:0], @"" );
-    XCTAssertEqual( ( (float *)[fd.data bytes] ) + nElems - 1, (float *)[fd samplePointer:nElems - 1], @"" );
+    XCTAssertEqual( ( (const float *)[fd.data bytes] ) + 4, (const float *)[fd samplePointer:4], @"%p,%p", samples + 4, (const float *)[fd samplePointer:4] );
+    XCTAssertEqual( ( (const float *)[fd.data bytes] ), (const float *)[fd samplePointer:0], @"" );
+    XCTAssertEqual( ( (const float *)[fd.data bytes] ) + nElems - 1, (const float *)[fd samplePointer:nElems - 1], @"" );
     XCTAssertNil([fd samplePointer:nElems], @"too many samples");
 }
 
@@ -247,7 +253,7 @@
 {
     NSUInteger nElems   = 10;
     NSMutableData *data = [NSMutableData dataWithLength:nElems * sizeof(float)];
-    float *samples      = (float *)[data mutableBytes];
+    float *samples      = (float *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < nElems; i++ ) {
         samples[i] = sinf(i);
@@ -267,7 +273,7 @@
     const NSUInteger cols = 4;
 
     NSMutableData *data = [NSMutableData dataWithLength:rows * cols * sizeof(NSUInteger)];
-    NSUInteger *samples = (NSUInteger *)[data mutableBytes];
+    NSUInteger *samples = (NSUInteger *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < rows * cols; i++ ) {
         samples[i] = i;
@@ -294,7 +300,7 @@
     const NSUInteger cols = 4;
 
     NSMutableData *data = [NSMutableData dataWithLength:rows * cols * sizeof(NSUInteger)];
-    NSUInteger *samples = (NSUInteger *)[data mutableBytes];
+    NSUInteger *samples = (NSUInteger *)data.mutableBytes;
 
     for ( NSUInteger i = 0; i < rows * cols; i++ ) {
         samples[i] = i;

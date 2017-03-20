@@ -8,12 +8,12 @@
  **/
 @implementation CPTLimitBand
 
-/** @property CPTPlotRange *range
+/** @property nullable CPTPlotRange *range
  *  @brief The data range for the band.
  **/
 @synthesize range;
 
-/** @property CPTFill *fill
+/** @property nullable CPTFill *fill
  *  @brief The fill used to draw the band.
  **/
 @synthesize fill;
@@ -26,7 +26,7 @@
  *  @param newFill The fill used to draw the interior of the band.
  *  @return A new CPTLimitBand instance initialized with the provided range and fill.
  **/
-+(instancetype)limitBandWithRange:(CPTPlotRange *)newRange fill:(CPTFill *)newFill
++(nonnull instancetype)limitBandWithRange:(nullable CPTPlotRange *)newRange fill:(nullable CPTFill *)newFill
 {
     return [[CPTLimitBand alloc] initWithRange:newRange fill:newFill];
 }
@@ -36,7 +36,7 @@
  *  @param newFill The fill used to draw the interior of the band.
  *  @return The initialized CPTLimitBand object.
  **/
--(instancetype)initWithRange:(CPTPlotRange *)newRange fill:(CPTFill *)newFill
+-(nonnull instancetype)initWithRange:(nullable CPTPlotRange *)newRange fill:(nullable CPTFill *)newFill
 {
     if ( (self = [super init]) ) {
         range = newRange;
@@ -45,12 +45,21 @@
     return self;
 }
 
+/// @cond
+
+-(nonnull instancetype)init
+{
+    return [self initWithRange:nil fill:nil];
+}
+
+/// @endcond
+
 #pragma mark -
 #pragma mark NSCopying Methods
 
 /// @cond
 
--(id)copyWithZone:(NSZone *)zone
+-(nonnull id)copyWithZone:(nullable NSZone *)zone
 {
     CPTLimitBand *newBand = [[CPTLimitBand allocWithZone:zone] init];
 
@@ -68,33 +77,37 @@
 
 /// @cond
 
--(void)encodeWithCoder:(NSCoder *)encoder
+-(void)encodeWithCoder:(nonnull NSCoder *)encoder
 {
-    if ( [encoder allowsKeyedCoding] ) {
-        [encoder encodeObject:self.range forKey:@"CPTLimitBand.range"];
-        [encoder encodeObject:self.fill forKey:@"CPTLimitBand.fill"];
-    }
-    else {
-        [encoder encodeObject:self.range];
-        [encoder encodeObject:self.fill];
-    }
+    [encoder encodeObject:self.range forKey:@"CPTLimitBand.range"];
+    [encoder encodeObject:self.fill forKey:@"CPTLimitBand.fill"];
 }
 
--(instancetype)initWithCoder:(NSCoder *)decoder
+/// @endcond
+
+/** @brief Returns an object initialized from data in a given unarchiver.
+ *  @param decoder An unarchiver object.
+ *  @return An object initialized from data in a given unarchiver.
+ */
+-(nullable instancetype)initWithCoder:(nonnull NSCoder *)decoder
 {
-    CPTPlotRange *newRange;
-    CPTFill *newFill;
-
-    if ( [decoder allowsKeyedCoding] ) {
-        newRange = [decoder decodeObjectForKey:@"CPTLimitBand.range"];
-        newFill  = [decoder decodeObjectForKey:@"CPTLimitBand.fill"];
+    if ( (self = [super init]) ) {
+        range = [decoder decodeObjectOfClass:[CPTPlotRange class]
+                                      forKey:@"CPTLimitBand.range"];
+        fill = [decoder decodeObjectOfClass:[CPTFill class]
+                                     forKey:@"CPTLimitBand.fill"];
     }
-    else {
-        newRange = [decoder decodeObject];
-        newFill  = [decoder decodeObject];
-    }
+    return self;
+}
 
-    return [self initWithRange:newRange fill:newFill];
+#pragma mark -
+#pragma mark NSSecureCoding Methods
+
+/// @cond
+
++(BOOL)supportsSecureCoding
+{
+    return YES;
 }
 
 /// @endcond
@@ -104,9 +117,9 @@
 
 /// @cond
 
--(NSString *)description
+-(nullable NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ with range: %@ and fill: %@>", [super description], self.range, self.fill];
+    return [NSString stringWithFormat:@"<%@ with range: %@ and fill: %@>", super.description, self.range, self.fill];
 }
 
 /// @endcond

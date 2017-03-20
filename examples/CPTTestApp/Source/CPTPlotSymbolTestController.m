@@ -2,7 +2,8 @@
 
 @interface CPTPlotSymbolTestController()
 
-@property (nonatomic, readwrite, strong) IBOutlet CPTGraphHostingView *hostView;
+@property (nonatomic, readwrite, strong, nullable) IBOutlet CPTGraphHostingView *hostView;
+@property (nonatomic, readwrite, strong, nonnull) CPTXYGraph *graph;
 
 @end
 
@@ -11,33 +12,35 @@
 @implementation CPTPlotSymbolTestController
 
 @synthesize hostView;
+@synthesize graph;
 
 -(void)awakeFromNib
 {
     [super awakeFromNib];
 
     // Create graph
-    graph                = [[CPTXYGraph alloc] initWithFrame:NSRectToCGRect(hostView.bounds)];
-    hostView.hostedGraph = graph;
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:NSRectToCGRect(self.hostView.bounds)];
+    self.hostView.hostedGraph = newGraph;
+    self.graph                = newGraph;
 
     // Remove axes
-    graph.axisSet = nil;
+    newGraph.axisSet = nil;
 
     // Background
     CGColorRef grayColor = CGColorCreateGenericGray(0.7, 1.0);
-    graph.fill = [CPTFill fillWithColor:[CPTColor colorWithCGColor:grayColor]];
+    newGraph.fill = [CPTFill fillWithColor:[CPTColor colorWithCGColor:grayColor]];
     CGColorRelease(grayColor);
 
     // Plot area
-    grayColor                = CGColorCreateGenericGray(0.2, 0.3);
-    graph.plotAreaFrame.fill = [CPTFill fillWithColor:[CPTColor colorWithCGColor:grayColor]];
+    grayColor                   = CGColorCreateGenericGray(0.2, 0.3);
+    newGraph.plotAreaFrame.fill = [CPTFill fillWithColor:[CPTColor colorWithCGColor:grayColor]];
     CGColorRelease(grayColor);
-    graph.plotAreaFrame.masksToBorder = NO;
+    newGraph.plotAreaFrame.masksToBorder = NO;
 
     // Setup plot space
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(-1.0) length:CPTDecimalFromFloat(11.0)];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(-1.0) length:CPTDecimalFromFloat(14.0)];
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)newGraph.defaultPlotSpace;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:@(-1.0) length:@11.0];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:@(-1.0) length:@14.0];
 
     CPTMutableShadow *lineShadow = [CPTMutableShadow shadow];
     lineShadow.shadowOffset     = CGSizeMake(3.0, -3.0);
@@ -46,7 +49,7 @@
 
     // Create a series of plots that uses the data source method
     for ( NSUInteger i = CPTPlotSymbolTypeNone; i <= CPTPlotSymbolTypeCustom; i++ ) {
-        CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] initWithFrame:graph.bounds];
+        CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] initWithFrame:newGraph.bounds];
         dataSourceLinePlot.identifier = [NSString stringWithFormat:@"%lu", (unsigned long)i];
         dataSourceLinePlot.shadow     = lineShadow;
 
@@ -57,19 +60,19 @@
 
         dataSourceLinePlot.dataSource = self;
 
-        [graph addPlot:dataSourceLinePlot];
+        [newGraph addPlot:dataSourceLinePlot];
     }
 }
 
 #pragma mark -
 #pragma mark Plot Data Source Methods
 
--(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plot
+-(NSUInteger)numberOfRecordsForPlot:(nonnull CPTPlot *)plot
 {
     return 10;
 }
 
--(id)numberForPlot:(CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
+-(nullable id)numberForPlot:(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
 {
     NSNumber *num;
 
@@ -79,7 +82,7 @@
             break;
 
         case CPTScatterPlotFieldY:
-            num = @([(NSString *)plot.identifier integerValue]);
+            num = @( ( (NSString *)plot.identifier ).integerValue );
             break;
 
         default:
@@ -88,7 +91,7 @@
     return num;
 }
 
--(CPTPlotSymbol *)symbolForScatterPlot:(CPTScatterPlot *)plot recordIndex:(NSUInteger)index
+-(nullable CPTPlotSymbol *)symbolForScatterPlot:(nonnull CPTScatterPlot *)plot recordIndex:(NSUInteger)index
 {
     CPTGradient *gradientFill = [CPTGradient rainbowGradient];
 
@@ -100,7 +103,7 @@
     symbolShadow.shadowColor      = [CPTColor blackColor];
 
     CPTPlotSymbol *symbol = [[CPTPlotSymbol alloc] init];
-    symbol.symbolType = (CPTPlotSymbolType)[(NSString *)plot.identifier intValue];
+    symbol.symbolType = (CPTPlotSymbolType)( (NSString *)plot.identifier ).intValue;
     symbol.fill       = [CPTFill fillWithGradient:gradientFill];
     symbol.shadow     = symbolShadow;
 

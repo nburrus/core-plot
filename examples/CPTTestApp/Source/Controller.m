@@ -9,16 +9,20 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
 @interface Controller()
 
+@property (nonatomic, readwrite, strong, nullable) IBOutlet CPTGraphHostingView *hostView;
+@property (nonatomic, readwrite, weak, nullable) IBOutlet NSWindow *plotSymbolWindow;
+@property (nonatomic, readwrite, weak, nullable) IBOutlet NSWindow *axisDemoWindow;
+@property (nonatomic, readwrite, weak, nullable) IBOutlet NSWindow *selectionDemoWindow;
+
+@property (nonatomic, readwrite, strong, nonnull) CPTXYGraph *graph;
+@property (nonatomic, readwrite, strong, nullable) RotationView *overlayRotationView;
+@property (nonatomic, readwrite, strong, nullable) CPTPlotSpaceAnnotation *symbolTextAnnotation;
+
 -(void)setupGraph;
 -(void)setupAxes;
 -(void)setupScatterPlots;
 -(void)positionFloatingAxis;
 -(void)setupBarPlots;
-
-@property (nonatomic, readwrite, strong) IBOutlet CPTGraphHostingView *hostView;
-@property (nonatomic, readwrite, unsafe_unretained) IBOutlet NSWindow *plotSymbolWindow;
-@property (nonatomic, readwrite, unsafe_unretained) IBOutlet NSWindow *axisDemoWindow;
-@property (nonatomic, readwrite, unsafe_unretained) IBOutlet NSWindow *selectionDemoWindow;
 
 @end
 
@@ -30,6 +34,10 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 @synthesize plotSymbolWindow;
 @synthesize axisDemoWindow;
 @synthesize selectionDemoWindow;
+
+@synthesize graph;
+@synthesize overlayRotationView;
+@synthesize symbolTextAnnotation;
 
 @synthesize xShift;
 @synthesize yShift;
@@ -57,7 +65,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 -(id)newObject
 {
     NSNumber *x1 = @(1.0 + ( (NSMutableArray *)self.content ).count * 0.05);
-    NSNumber *y1 = @(1.2 * rand() / (double)RAND_MAX + 1.2);
+    NSNumber *y1 = @(1.2 * arc4random() / (double)UINT32_MAX + 1.2);
 
     return @{
                @"x": x1,
@@ -71,10 +79,12 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 -(void)setupGraph
 {
     // Create graph and apply a dark theme
-    graph = [[CPTXYGraph alloc] initWithFrame:NSRectToCGRect(self.hostView.bounds)];
-    CPTTheme *theme = [CPTTheme themeNamed:kCPTDarkGradientTheme];
-    [graph applyTheme:theme];
-    self.hostView.hostedGraph = graph;
+    CPTXYGraph *newGraph = [[CPTXYGraph alloc] initWithFrame:NSRectToCGRect(self.hostView.bounds)];
+    CPTTheme *theme      = [CPTTheme themeNamed:kCPTDarkGradientTheme];
+
+    [newGraph applyTheme:theme];
+    self.hostView.hostedGraph = newGraph;
+    self.graph                = newGraph;
 
     // Graph title
     NSString *lineOne = @"This is the Graph Title";
@@ -90,25 +100,25 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     [graphTitle addAttribute:NSFontAttributeName value:titleFont range:NSMakeRange(0, lineOne.length)];
     titleFont = [NSFont fontWithName:@"Helvetica" size:14.0];
     [graphTitle addAttribute:NSFontAttributeName value:titleFont range:NSMakeRange(lineOne.length + 1, lineTwo.length)];
-    graph.attributedTitle = graphTitle;
+    newGraph.attributedTitle = graphTitle;
 
-    graph.titleDisplacement        = CGPointMake(0.0, 50.0);
-    graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+    newGraph.titleDisplacement        = CGPointMake(0.0, 50.0);
+    newGraph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
 
     // Graph padding
-    graph.paddingLeft   = 60.0;
-    graph.paddingTop    = 60.0;
-    graph.paddingRight  = 60.0;
-    graph.paddingBottom = 60.0;
+    newGraph.paddingLeft   = 60.0;
+    newGraph.paddingTop    = 60.0;
+    newGraph.paddingRight  = 60.0;
+    newGraph.paddingBottom = 60.0;
 
     // Plot area delegate
-    graph.plotAreaFrame.plotArea.delegate = self;
+    newGraph.plotAreaFrame.plotArea.delegate = self;
 }
 
 -(void)setupAxes
 {
     // Setup scatter plot space
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
 
     plotSpace.allowsUserInteraction = YES;
     plotSpace.delegate              = self;
@@ -128,16 +138,16 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
     // Axes
     // Label x axis with a fixed interval policy
-    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)self.graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
-    x.majorIntervalLength         = CPTDecimalFromDouble(0.5);
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(2.0);
-    x.minorTicksPerInterval       = 2;
-    x.majorGridLineStyle          = majorGridLineStyle;
-    x.minorGridLineStyle          = minorGridLineStyle;
-    NSArray *exclusionRanges = @[[CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(1.99) length:CPTDecimalFromFloat(0.02)],
-                                 [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0.99) length:CPTDecimalFromFloat(0.02)],
-                                 [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(2.99) length:CPTDecimalFromFloat(0.02)]];
+    x.majorIntervalLength   = @0.5;
+    x.orthogonalPosition    = @2.0;
+    x.minorTicksPerInterval = 2;
+    x.majorGridLineStyle    = majorGridLineStyle;
+    x.minorGridLineStyle    = minorGridLineStyle;
+    CPTPlotRangeArray *exclusionRanges = @[[CPTPlotRange plotRangeWithLocation:@1.99 length:@0.02],
+                                           [CPTPlotRange plotRangeWithLocation:@0.99 length:@0.02],
+                                           [CPTPlotRange plotRangeWithLocation:@2.99 length:@0.02]];
     x.labelExclusionRanges = exclusionRanges;
 
     NSMutableAttributedString *xTitle = [[NSMutableAttributedString alloc] initWithString:@"X Axis\nLine 2"];
@@ -149,20 +159,20 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     x.attributedTitle = xTitle;
 
     x.titleOffset   = 30.0;
-    x.titleLocation = CPTDecimalFromDouble(3.0);
+    x.titleLocation = @3.0;
 
     // Label y with an automatic label policy.
     CPTXYAxis *y = axisSet.yAxis;
     y.labelingPolicy              = CPTAxisLabelingPolicyAutomatic;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromDouble(2.0);
+    y.orthogonalPosition          = @2.0;
     y.minorTicksPerInterval       = 2;
     y.preferredNumberOfMajorTicks = 8;
     y.majorGridLineStyle          = majorGridLineStyle;
     y.minorGridLineStyle          = minorGridLineStyle;
     y.labelOffset                 = 10.0;
-    exclusionRanges               = @[[CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(1.99) length:CPTDecimalFromFloat(0.02)],
-                                      [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(0.99) length:CPTDecimalFromFloat(0.02)],
-                                      [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(3.99) length:CPTDecimalFromFloat(0.02)]];
+    exclusionRanges               = @[[CPTPlotRange plotRangeWithLocation:@1.99 length:@0.02],
+                                      [CPTPlotRange plotRangeWithLocation:@0.99 length:@0.02],
+                                      [CPTPlotRange plotRangeWithLocation:@3.99 length:@0.02]];
     y.labelExclusionRanges = exclusionRanges;
 
     NSMutableAttributedString *yTitle = [[NSMutableAttributedString alloc] initWithString:@"Y Axis\nLine 2"];
@@ -174,7 +184,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     y.attributedTitle = yTitle;
 
     y.titleOffset   = 30.0;
-    y.titleLocation = CPTDecimalFromDouble(2.7);
+    y.titleLocation = @2.7;
 
     // Rotate the labels by 45 degrees, just to show it can be done.
     self.labelRotation = M_PI_4;
@@ -183,23 +193,23 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     // We add constraints to this axis below
     CPTXYAxis *y2 = [[CPTXYAxis alloc] initWithFrame:CGRectZero];
     y2.labelingPolicy              = CPTAxisLabelingPolicyAutomatic;
-    y2.orthogonalCoordinateDecimal = CPTDecimalFromDouble(3.0);
+    y2.orthogonalPosition          = @3.0;
     y2.minorTicksPerInterval       = 0;
     y2.preferredNumberOfMajorTicks = 4;
     y2.majorGridLineStyle          = majorGridLineStyle;
     y2.minorGridLineStyle          = minorGridLineStyle;
     y2.labelOffset                 = 10.0;
     y2.coordinate                  = CPTCoordinateY;
-    y2.plotSpace                   = graph.defaultPlotSpace;
+    y2.plotSpace                   = self.graph.defaultPlotSpace;
     y2.axisLineStyle               = redLineStyle;
     y2.majorTickLineStyle          = redLineStyle;
     y2.minorTickLineStyle          = nil;
     y2.labelTextStyle              = nil;
-    y2.visibleRange                = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromInteger(2) length:CPTDecimalFromInteger(3)];
+    y2.visibleRange                = [CPTPlotRange plotRangeWithLocation:@2.0 length:@3.0];
     y2.title                       = @"Y2 title";
-    y2.titleLocation               = CPTDecimalFromInteger(3);
+    y2.titleLocation               = @3.0;
     // Set axes
-    graph.axisSet.axes = @[x, y, y2];
+    self.graph.axisSet.axes = @[x, y, y2];
 }
 
 -(void)setupScatterPlots
@@ -217,7 +227,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     lineStyle.lineColor         = [CPTColor blueColor];
     boundLinePlot.dataLineStyle = lineStyle;
 
-    [graph addPlot:boundLinePlot];
+    [self.graph addPlot:boundLinePlot];
     [boundLinePlot bind:CPTScatterPlotBindingXValues toObject:self withKeyPath:@"arrangedObjects.x" options:nil];
     [boundLinePlot bind:CPTScatterPlotBindingYValues toObject:self withKeyPath:@"arrangedObjects.y" options:nil];
 
@@ -226,7 +236,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     fillImage.tiled = YES;
     CPTFill *areaImageFill = [CPTFill fillWithImage:fillImage];
     boundLinePlot.areaFill      = areaImageFill;
-    boundLinePlot.areaBaseValue = [[NSDecimalNumber one] decimalValue];
+    boundLinePlot.areaBaseValue = @1.0;
 
     // Add plot symbols
     CPTMutableLineStyle *symbolLineStyle = [CPTMutableLineStyle lineStyle];
@@ -260,7 +270,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
     dataSourceLinePlot.labelOffset   = 5.0;
     dataSourceLinePlot.labelRotation = M_PI_4;
-    [graph addPlot:dataSourceLinePlot];
+    [self.graph addPlot:dataSourceLinePlot];
 
     // Make the data source line use stepped interpolation
     dataSourceLinePlot.interpolation = CPTScatterPlotInterpolationStepped;
@@ -271,14 +281,14 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     areaGradient.angle = -90.0;
     CPTFill *areaGradientFill = [CPTFill fillWithGradient:areaGradient];
     dataSourceLinePlot.areaFill      = areaGradientFill;
-    dataSourceLinePlot.areaBaseValue = CPTDecimalFromDouble(1.75);
+    dataSourceLinePlot.areaBaseValue = @1.75;
 
     if ( !hasData ) {
         // Add some initial data
-        NSMutableArray *contentArray = [NSMutableArray arrayWithCapacity:100];
+        NSMutableArray<NSDictionary *> *contentArray = [NSMutableArray arrayWithCapacity:100];
         for ( NSUInteger i = 0; i < 60; i++ ) {
             NSNumber *x = @(1.0 + i * 0.05);
-            NSNumber *y = @(1.2 * rand() / (double)RAND_MAX + 1.2);
+            NSNumber *y = @(1.2 * arc4random() / (double)UINT32_MAX + 1.2);
             [contentArray addObject:@{ @"x": x,
                                        @"y": y }
             ];
@@ -290,18 +300,18 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
     // Auto scale the plot space to fit the plot data
     // Extend the y range by 10% for neatness
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
     plotSpace.allowsMomentum = YES;
 
     [plotSpace scaleToFitPlots:@[boundLinePlot, dataSourceLinePlot]];
     CPTPlotRange *xRange        = plotSpace.xRange;
     CPTMutablePlotRange *yRange = [plotSpace.yRange mutableCopy];
-    [yRange expandRangeByFactor:CPTDecimalFromDouble(1.1)];
+    [yRange expandRangeByFactor:@1.1];
     plotSpace.yRange = yRange;
 
     // Restrict y range to a global range
-    plotSpace.globalXRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(-1.0) length:CPTDecimalFromDouble(5.0)];
-    plotSpace.globalYRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(0.0) length:CPTDecimalFromDouble(6.0)];
+    plotSpace.globalXRange = [CPTPlotRange plotRangeWithLocation:@(-1.0) length:@5.0];
+    plotSpace.globalYRange = [CPTPlotRange plotRangeWithLocation:@0.0 length:@6.0];
 
     // set the x and y shift to match the new ranges
     CGFloat length = xRange.lengthDouble;
@@ -313,7 +323,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 -(void)positionFloatingAxis
 {
     // Position y2 axis relative to the plot area, ie, not moving when dragging
-    CPTXYAxis *y2 = (graph.axisSet.axes)[2];
+    CPTXYAxis *y2 = (self.graph.axisSet.axes)[2];
 
     y2.axisConstraints = [CPTConstraints constraintWithUpperOffset:150.0];
 }
@@ -323,57 +333,57 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     // Add plot space for horizontal bar charts
     CPTXYPlotSpace *barPlotSpace = [[CPTXYPlotSpace alloc] init];
 
-    barPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(-20.0f) length:CPTDecimalFromFloat(200.0f)];
-    barPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromFloat(-7.0f) length:CPTDecimalFromFloat(15.0f)];
-    [graph addPlotSpace:barPlotSpace];
+    barPlotSpace.xRange = [CPTPlotRange plotRangeWithLocation:@(-20.0) length:@200.0];
+    barPlotSpace.yRange = [CPTPlotRange plotRangeWithLocation:@(-7.0) length:@15.0];
+    [self.graph addPlotSpace:barPlotSpace];
 
     // First bar plot
     CPTMutableTextStyle *whiteTextStyle = [CPTMutableTextStyle textStyle];
     whiteTextStyle.color = [CPTColor whiteColor];
     CPTBarPlot *barPlot = [CPTBarPlot tubularBarPlotWithColor:[CPTColor darkGrayColor] horizontalBars:YES];
-    barPlot.baseValue      = CPTDecimalFromFloat(20.0f);
+    barPlot.baseValue      = @20.0;
     barPlot.dataSource     = self;
-    barPlot.barOffset      = CPTDecimalFromFloat(-0.25f);
+    barPlot.barOffset      = @(-0.25);
     barPlot.identifier     = barPlot1;
-    barPlot.plotRange      = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(0.0) length:CPTDecimalFromDouble(7.0)];
+    barPlot.plotRange      = [CPTPlotRange plotRangeWithLocation:@0.0 length:@7.0];
     barPlot.labelTextStyle = whiteTextStyle;
-    [graph addPlot:barPlot toPlotSpace:barPlotSpace];
+    [self.graph addPlot:barPlot toPlotSpace:barPlotSpace];
 
     // Second bar plot
     barPlot              = [CPTBarPlot tubularBarPlotWithColor:[CPTColor blueColor] horizontalBars:YES];
     barPlot.dataSource   = self;
-    barPlot.baseValue    = CPTDecimalFromFloat(20.0f);
-    barPlot.barOffset    = CPTDecimalFromFloat(0.25f);
+    barPlot.baseValue    = @20.0;
+    barPlot.barOffset    = @0.25;
     barPlot.cornerRadius = 2.0;
     barPlot.identifier   = barPlot2;
-    barPlot.plotRange    = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(0.0) length:CPTDecimalFromDouble(7.0)];
+    barPlot.plotRange    = [CPTPlotRange plotRangeWithLocation:@0.0 length:@7.0];
     barPlot.delegate     = self;
-    [graph addPlot:barPlot toPlotSpace:barPlotSpace];
+    [self.graph addPlot:barPlot toPlotSpace:barPlotSpace];
 }
 
 #pragma mark -
 #pragma mark Actions
 
--(IBAction)reloadDataSourcePlot:(id)sender
+-(IBAction)reloadDataSourcePlot:(nullable id)sender
 {
-    CPTPlot *plot = [graph plotWithIdentifier:dataSourcePlot];
+    CPTPlot *plot = [self.graph plotWithIdentifier:dataSourcePlot];
 
     [plot reloadData];
 }
 
--(IBAction)removeData:(id)sender
+-(IBAction)removeData:(nullable id)sender
 {
     NSUInteger index = self.selectionIndex;
 
     if ( index != NSNotFound ) {
         [self removeObjectAtArrangedObjectIndex:index];
 
-        CPTPlot *plot = [graph plotWithIdentifier:dataSourcePlot];
+        CPTPlot *plot = [self.graph plotWithIdentifier:dataSourcePlot];
         [plot deleteDataInIndexRange:NSMakeRange(index, 1)];
     }
 }
 
--(IBAction)insertData:(id)sender
+-(IBAction)insertData:(nullable id)sender
 {
     NSUInteger index = self.selectionIndex;
 
@@ -381,7 +391,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
         id newData = [self newObject];
         [self insertObject:newData atArrangedObjectIndex:index];
 
-        CPTPlot *plot = [graph plotWithIdentifier:dataSourcePlot];
+        CPTPlot *plot = [self.graph plotWithIdentifier:dataSourcePlot];
         [plot insertDataAtIndex:index numberOfRecords:1];
     }
 }
@@ -389,7 +399,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 #pragma mark -
 #pragma mark Plot Data Source Methods
 
--(NSUInteger)numberOfRecordsForPlot:(CPTPlot *)plot
+-(NSUInteger)numberOfRecordsForPlot:(nonnull CPTPlot *)plot
 {
     if ( [plot isKindOfClass:[CPTBarPlot class]] ) {
         return 8;
@@ -399,7 +409,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     }
 }
 
--(id)numberForPlot:(CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
+-(nullable id)numberForPlot:(nonnull CPTPlot *)plot field:(NSUInteger)fieldEnum recordIndex:(NSUInteger)index
 {
     NSNumber *num;
 
@@ -413,18 +423,18 @@ static NSString *const barPlot2       = @"Bar Plot 2";
         NSString *key = (fieldEnum == CPTScatterPlotFieldX ? @"x" : @"y");
         num = (self.arrangedObjects)[index][key];
         if ( fieldEnum == CPTScatterPlotFieldY ) {
-            num = @([num doubleValue] + 1.0);
+            num = @(num.doubleValue + 1.0);
         }
     }
     return num;
 }
 
--(CPTLayer *)dataLabelForPlot:(CPTPlot *)plot recordIndex:(NSUInteger)index
+-(nullable CPTLayer *)dataLabelForPlot:(nonnull CPTPlot *)plot recordIndex:(NSUInteger)index
 {
-    if ( [(NSString *)plot.identifier isEqualToString : barPlot2] ) {
+    if ( [(NSString *) plot.identifier isEqualToString:barPlot2] ) {
         return (id)[NSNull null]; // Don't show any label
     }
-    else if ( [(NSString *)plot.identifier isEqualToString : barPlot1] && (index < 4) ) {
+    else if ( [(NSString *) plot.identifier isEqualToString:barPlot1] && (index < 4) ) {
         return (id)[NSNull null];
     }
     else if ( index % 4 ) {
@@ -438,51 +448,58 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 #pragma mark -
 #pragma mark CPTScatterPlot delegate method
 
--(void)scatterPlot:(CPTScatterPlot *)plot plotSymbolWasSelectedAtRecordIndex:(NSUInteger)index
+-(void)scatterPlot:(nonnull CPTScatterPlot *)plot plotSymbolWasSelectedAtRecordIndex:(NSUInteger)index
 {
-    if ( symbolTextAnnotation ) {
-        [graph.plotAreaFrame.plotArea removeAnnotation:symbolTextAnnotation];
-        symbolTextAnnotation = nil;
+    CPTPlotSpaceAnnotation *annotation = self.symbolTextAnnotation;
+
+    if ( annotation ) {
+        [self.graph.plotAreaFrame.plotArea removeAnnotation:annotation];
+        self.symbolTextAnnotation = nil;
     }
 
     // Setup a style for the annotation
     CPTMutableTextStyle *hitAnnotationTextStyle = [CPTMutableTextStyle textStyle];
     hitAnnotationTextStyle.color    = [CPTColor whiteColor];
-    hitAnnotationTextStyle.fontSize = 16.0f;
+    hitAnnotationTextStyle.fontSize = CPTFloat(16.0);
     hitAnnotationTextStyle.fontName = @"Helvetica-Bold";
 
     // Determine point of symbol in plot coordinates
-    NSDictionary *dataPoint = (self.arrangedObjects)[index];
+    NSDictionary<NSString *, NSNumber *> *dataPoint = (self.arrangedObjects)[index];
 
     NSNumber *x = dataPoint[@"x"];
     NSNumber *y = dataPoint[@"y"];
 
-    NSArray *anchorPoint = @[x, y];
+    CPTNumberArray *anchorPoint = @[x, y];
 
     // Add annotation
     // First make a string for the y value
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setMaximumFractionDigits:2];
+    formatter.maximumFractionDigits = 2;
     NSString *yString = [formatter stringFromNumber:y];
 
     // Now add the annotation to the plot area
-    CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithText:yString style:hitAnnotationTextStyle];
-    symbolTextAnnotation              = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:graph.defaultPlotSpace anchorPlotPoint:anchorPoint];
-    symbolTextAnnotation.contentLayer = textLayer;
-    symbolTextAnnotation.displacement = CGPointMake(0.0, 20.0);
-    [graph.plotAreaFrame.plotArea addAnnotation:symbolTextAnnotation];
+    CPTPlotSpace *defaultSpace = self.graph.defaultPlotSpace;
+    if ( defaultSpace ) {
+        CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithText:yString style:hitAnnotationTextStyle];
+        annotation              = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:defaultSpace anchorPlotPoint:anchorPoint];
+        annotation.contentLayer = textLayer;
+        annotation.displacement = CGPointMake(0.0, 20.0);
+        [self.graph.plotAreaFrame.plotArea addAnnotation:annotation];
+        self.symbolTextAnnotation = annotation;
+    }
 }
 
 #pragma mark -
 #pragma mark CPTBarPlot delegate method
 
--(void)barPlot:(CPTBarPlot *)plot barWasSelectedAtRecordIndex:(NSUInteger)index
+-(void)barPlot:(nonnull CPTBarPlot *)plot barWasSelectedAtRecordIndex:(NSUInteger)index
 {
     NSLog(@"barWasSelectedAtRecordIndex %u", (unsigned)index);
 
-    if ( symbolTextAnnotation ) {
-        [graph.plotAreaFrame.plotArea removeAnnotation:symbolTextAnnotation];
-        symbolTextAnnotation = nil;
+    CPTPlotSpaceAnnotation *annotation = self.symbolTextAnnotation;
+    if ( annotation ) {
+        [self.graph.plotAreaFrame.plotArea removeAnnotation:annotation];
+        self.symbolTextAnnotation = nil;
     }
 
     // Setup a style for the annotation
@@ -493,78 +510,107 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
     // Determine point of symbol in plot coordinates
 
-    NSNumber *x          = @0;
-    NSNumber *y          = [self numberForPlot:plot field:0 recordIndex:index];
-    NSArray *anchorPoint = @[x, @(index)];
+    NSNumber *x                 = @0;
+    NSNumber *y                 = [self numberForPlot:plot field:0 recordIndex:index];
+    CPTNumberArray *anchorPoint = @[x, @(index)];
 
     // Add annotation
     // First make a string for the y value
     NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-    [formatter setMaximumFractionDigits:2];
+    formatter.maximumFractionDigits = 2;
     NSString *yString = [formatter stringFromNumber:y];
 
     // Now add the annotation to the plot area
-    CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithText:yString style:hitAnnotationTextStyle];
-    symbolTextAnnotation              = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:plot.plotSpace anchorPlotPoint:anchorPoint];
-    symbolTextAnnotation.contentLayer = textLayer;
-    symbolTextAnnotation.displacement = CGPointMake(0.0, 0.0);
-    [graph.plotAreaFrame.plotArea addAnnotation:symbolTextAnnotation];
+    CPTPlotSpace *defaultSpace = self.graph.defaultPlotSpace;
+    if ( defaultSpace ) {
+        CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithText:yString style:hitAnnotationTextStyle];
+        annotation              = [[CPTPlotSpaceAnnotation alloc] initWithPlotSpace:defaultSpace anchorPlotPoint:anchorPoint];
+        annotation.contentLayer = textLayer;
+        annotation.displacement = CGPointMake(0.0, 0.0);
+        [self.graph.plotAreaFrame.plotArea addAnnotation:annotation];
+        self.symbolTextAnnotation = annotation;
+    }
 
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"barWidthScale"];
-    animation.duration            = 0.25;
-    animation.toValue             = @0.0;
-    animation.repeatCount         = 1;
-    animation.autoreverses        = YES;
-    animation.removedOnCompletion = YES;
-    [plot addAnimation:animation forKey:@"barWidthScale"];
+    const CGFloat duration = 0.25;
+    NSNumber *barWidth     = plot.barWidth;
+
+    if ( barWidth ) {
+        [CPTAnimation animate:plot
+                     property:@"barWidth"
+                   fromNumber:plot.barWidth
+                     toNumber:@0.0
+                     duration:duration
+                    withDelay:0.0
+               animationCurve:CPTAnimationCurveDefault
+                     delegate:nil];
+
+        [CPTAnimation animate:plot
+                     property:@"barWidth"
+                   fromNumber:nil
+                     toNumber:barWidth
+                     duration:duration
+                    withDelay:duration
+               animationCurve:CPTAnimationCurveDefault
+                     delegate:nil];
+    }
 }
 
 #pragma mark -
 #pragma mark Plot area delegate method
 
--(void)plotAreaWasSelected:(CPTPlotArea *)plotArea
+-(void)plotAreaWasSelected:(nonnull CPTPlotArea *)plotArea
 {
     // Remove the annotation
-    if ( symbolTextAnnotation ) {
-        [graph.plotAreaFrame.plotArea removeAnnotation:symbolTextAnnotation];
-        symbolTextAnnotation = nil;
+    CPTPlotSpaceAnnotation *annotation = self.symbolTextAnnotation;
+
+    if ( annotation ) {
+        [self.graph.plotAreaFrame.plotArea removeAnnotation:annotation];
+        self.symbolTextAnnotation = nil;
     }
 }
 
 #pragma mark -
 #pragma mark PDF / image export
 
--(IBAction)exportToPDF:(id)sender
+-(IBAction)exportToPDF:(nullable id)sender
 {
     NSSavePanel *pdfSavingDialog = [NSSavePanel savePanel];
 
-    [pdfSavingDialog setAllowedFileTypes:@[@"pdf"]];
+    pdfSavingDialog.allowedFileTypes = @[@"pdf"];
 
     if ( [pdfSavingDialog runModal] == NSOKButton ) {
-        NSData *dataForPDF = [graph dataForPDFRepresentationOfLayer];
-        [dataForPDF writeToURL:[pdfSavingDialog URL] atomically:NO];
+        NSData *dataForPDF = [self.graph dataForPDFRepresentationOfLayer];
+
+        NSURL *url = pdfSavingDialog.URL;
+        if ( url ) {
+            [dataForPDF writeToURL:url atomically:NO];
+        }
     }
 }
 
--(IBAction)exportToPNG:(id)sender
+-(IBAction)exportToPNG:(nullable id)sender
 {
     NSSavePanel *pngSavingDialog = [NSSavePanel savePanel];
 
-    [pngSavingDialog setAllowedFileTypes:@[@"png"]];
+    pngSavingDialog.allowedFileTypes = @[@"png"];
 
     if ( [pngSavingDialog runModal] == NSOKButton ) {
-        NSImage *image            = [graph imageOfLayer];
-        NSData *tiffData          = [image TIFFRepresentation];
+        NSImage *image            = [self.graph imageOfLayer];
+        NSData *tiffData          = image.TIFFRepresentation;
         NSBitmapImageRep *tiffRep = [NSBitmapImageRep imageRepWithData:tiffData];
-        NSData *pngData           = [tiffRep representationUsingType:NSPNGFileType properties:nil];
-        [pngData writeToURL:[pngSavingDialog URL] atomically:NO];
+        NSData *pngData           = [tiffRep representationUsingType:NSPNGFileType properties:@{}];
+
+        NSURL *url = pngSavingDialog.URL;
+        if ( url ) {
+            [pngData writeToURL:url atomically:NO];
+        }
     }
 }
 
 #pragma mark -
 #pragma mark Printing
 
--(IBAction)printDocument:(id)sender
+-(IBAction)printDocument:(nullable id)sender
 {
     NSPrintInfo *printInfo = [NSPrintInfo sharedPrintInfo];
 
@@ -575,14 +621,18 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
     self.hostView.printRect = printRect;
 
-    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:self.hostView printInfo:printInfo];
-    [printOperation runOperationModalForWindow:self.hostView.window
-                                      delegate:self
-                                didRunSelector:@selector(printOperationDidRun:success:contextInfo:)
-                                   contextInfo:NULL];
+    CPTGraphHostingView *host = self.hostView;
+    NSWindow *window          = host.window;
+    if ( window ) {
+        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:host printInfo:printInfo];
+        [printOperation runOperationModalForWindow:window
+                                          delegate:self
+                                    didRunSelector:@selector(printOperationDidRun:success:contextInfo:)
+                                       contextInfo:NULL];
+    }
 }
 
--(void)printOperationDidRun:(NSPrintOperation *)printOperation success:(BOOL)success contextInfo:(void *)contextInfo
+-(void)printOperationDidRun:(nonnull NSPrintOperation *)printOperation success:(BOOL)success contextInfo:(nullable void *)contextInfo
 {
     // print delegate
 }
@@ -590,7 +640,7 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 #pragma mark -
 #pragma mark Layer exploding for illustration
 
--(IBAction)explodeLayers:(id)sender
+-(IBAction)explodeLayers:(nullable id)sender
 {
     CATransform3D perspectiveRotation = CATransform3DMakeRotation(-40.0 * M_PI / 180.0, 0.0, 1.0, 0.0);
 
@@ -598,25 +648,26 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 
     perspectiveRotation = CATransform3DScale(perspectiveRotation, 0.7, 0.7, 0.7);
 
-    graph.masksToBounds            = NO;
-    graph.superlayer.masksToBounds = NO;
+    self.graph.masksToBounds            = NO;
+    self.graph.superlayer.masksToBounds = NO;
 
-    overlayRotationView                   = [[RotationView alloc] initWithFrame:self.hostView.frame];
-    overlayRotationView.rotationDelegate  = self;
-    overlayRotationView.rotationTransform = perspectiveRotation;
-    [overlayRotationView setAutoresizingMask:[self.hostView autoresizingMask]];
-    [[self.hostView superview] addSubview:overlayRotationView positioned:NSWindowAbove relativeTo:self.hostView];
+    RotationView *overlayView = [[RotationView alloc] initWithFrame:self.hostView.frame];
+    overlayView.rotationDelegate  = self;
+    overlayView.rotationTransform = perspectiveRotation;
+    overlayView.autoresizingMask  = self.hostView.autoresizingMask;
+    [self.hostView.superview addSubview:overlayView positioned:NSWindowAbove relativeTo:self.hostView];
+    self.overlayRotationView = overlayView;
 
     [CATransaction begin];
-    [CATransaction setValue:@1.0f forKey:kCATransactionAnimationDuration];
+    [CATransaction setValue:@1.0 forKey:kCATransactionAnimationDuration];
 
-    [Controller recursivelySplitSublayersInZForLayer:graph depthLevel:0];
-    graph.superlayer.sublayerTransform = perspectiveRotation;
+    [Controller recursivelySplitSublayersInZForLayer:self.graph depthLevel:0];
+    self.graph.superlayer.sublayerTransform = perspectiveRotation;
 
     [CATransaction commit];
 }
 
-+(void)recursivelySplitSublayersInZForLayer:(CALayer *)layer depthLevel:(NSUInteger)depthLevel
++(void)recursivelySplitSublayersInZForLayer:(nonnull CALayer *)layer depthLevel:(NSUInteger)depthLevel
 {
     layer.zPosition   = kZDistanceBetweenLayers * (CGFloat)depthLevel;
     layer.borderColor = [CPTColor blueColor].cgColor;
@@ -628,21 +679,21 @@ static NSString *const barPlot2       = @"Bar Plot 2";
     }
 }
 
--(IBAction)reassembleLayers:(id)sender
+-(IBAction)reassembleLayers:(nullable id)sender
 {
     [CATransaction begin];
     [CATransaction setValue:@1.0f forKey:kCATransactionAnimationDuration];
 
-    [Controller recursivelyAssembleSublayersInZForLayer:graph];
-    graph.superlayer.sublayerTransform = CATransform3DIdentity;
+    [Controller recursivelyAssembleSublayersInZForLayer:self.graph];
+    self.graph.superlayer.sublayerTransform = CATransform3DIdentity;
 
     [CATransaction commit];
 
-    [overlayRotationView removeFromSuperview];
-    overlayRotationView = nil;
+    [self.overlayRotationView removeFromSuperview];
+    self.overlayRotationView = nil;
 }
 
-+(void)recursivelyAssembleSublayersInZForLayer:(CALayer *)layer
++(void)recursivelyAssembleSublayersInZForLayer:(nonnull CALayer *)layer
 {
     layer.zPosition   = 0.0;
     layer.borderColor = [CPTColor clearColor].cgColor;
@@ -655,31 +706,40 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 #pragma mark -
 #pragma mark Demo windows
 
--(IBAction)plotSymbolDemo:(id)sender
+-(IBAction)plotSymbolDemo:(nullable id)sender
 {
     if ( !self.plotSymbolWindow ) {
-        [NSBundle loadNibNamed:@"PlotSymbolDemo" owner:self];
+        [[NSBundle mainBundle] loadNibNamed:@"PlotSymbolDemo"
+                                      owner:self
+                            topLevelObjects:nil];
     }
 
-    [self.plotSymbolWindow makeKeyAndOrderFront:sender];
+    NSWindow *window = self.plotSymbolWindow;
+    [window makeKeyAndOrderFront:sender];
 }
 
--(IBAction)axisDemo:(id)sender
+-(IBAction)axisDemo:(nullable id)sender
 {
     if ( !self.axisDemoWindow ) {
-        [NSBundle loadNibNamed:@"AxisDemo" owner:self];
+        [[NSBundle mainBundle] loadNibNamed:@"AxisDemo"
+                                      owner:self
+                            topLevelObjects:nil];
     }
 
-    [self.axisDemoWindow makeKeyAndOrderFront:sender];
+    NSWindow *window = self.axisDemoWindow;
+    [window makeKeyAndOrderFront:sender];
 }
 
--(IBAction)selectionDemo:(id)sender
+-(IBAction)selectionDemo:(nullable id)sender
 {
     if ( !self.selectionDemoWindow ) {
-        [NSBundle loadNibNamed:@"SelectionDemo" owner:self];
+        [[NSBundle mainBundle] loadNibNamed:@"SelectionDemo"
+                                      owner:self
+                            topLevelObjects:nil];
     }
 
-    [self.selectionDemoWindow makeKeyAndOrderFront:sender];
+    NSWindow *window = self.selectionDemoWindow;
+    [window makeKeyAndOrderFront:sender];
 }
 
 #pragma mark -
@@ -688,9 +748,9 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 -(void)rotateObjectUsingTransform:(CATransform3D)rotationTransform
 {
     [CATransaction begin];
-    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+    [CATransaction setValue:@(YES) forKey:kCATransactionDisableActions];
 
-    graph.superlayer.sublayerTransform = rotationTransform;
+    self.graph.superlayer.sublayerTransform = rotationTransform;
 
     [CATransaction commit];
 }
@@ -701,27 +761,27 @@ static NSString *const barPlot2       = @"Bar Plot 2";
 -(void)setXShift:(CGFloat)newShift
 {
     xShift = newShift;
-    CPTXYPlotSpace *space         = (CPTXYPlotSpace *)graph.defaultPlotSpace;
+    CPTXYPlotSpace *space         = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
     CPTMutablePlotRange *newRange = [space.xRange mutableCopy];
-    newRange.length = CPTDecimalFromDouble(3.0 + newShift);
-    space.xRange    = newRange;
+    newRange.lengthDouble = 3.0 + newShift;
+    space.xRange          = newRange;
 }
 
 -(void)setYShift:(CGFloat)newShift
 {
     yShift = newShift;
-    CPTXYPlotSpace *space         = (CPTXYPlotSpace *)graph.defaultPlotSpace;
+    CPTXYPlotSpace *space         = (CPTXYPlotSpace *)self.graph.defaultPlotSpace;
     CPTMutablePlotRange *newRange = [space.yRange mutableCopy];
-    newRange.length = CPTDecimalFromDouble(2.0 + newShift);
-    space.yRange    = newRange;
+    newRange.lengthDouble = 2.0 + newShift;
+    space.yRange          = newRange;
 }
 
 -(void)setLabelRotation:(CGFloat)newRotation
 {
     labelRotation = newRotation;
 
-    ( (CPTXYAxisSet *)graph.axisSet ).yAxis.labelRotation   = newRotation;
-    [graph plotWithIdentifier:dataSourcePlot].labelRotation = newRotation;
+    ( (CPTXYAxisSet *)self.graph.axisSet ).yAxis.labelRotation   = newRotation;
+    [self.graph plotWithIdentifier:dataSourcePlot].labelRotation = newRotation;
 }
 
 @end

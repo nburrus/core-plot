@@ -2,7 +2,6 @@
 
 #import "CPTColor.h"
 #import "CPTExceptions.h"
-#import "CPTFill.h"
 #import "CPTLegend.h"
 #import "CPTLineStyle.h"
 #import "CPTMutableNumericData.h"
@@ -13,6 +12,7 @@
 #import "CPTUtilities.h"
 #import "CPTXYPlotSpace.h"
 #import "NSCoderExtensions.h"
+#import "tgmath.h"
 
 /** @defgroup plotAnimationTradingRangePlot Trading Range Plot
  *  @brief Trading range plot properties that can be animated using Core Animation.
@@ -26,16 +26,16 @@
  *  @endif
  **/
 
-NSString *const CPTTradingRangePlotBindingXValues            = @"xValues";            ///< X values.
-NSString *const CPTTradingRangePlotBindingOpenValues         = @"openValues";         ///< Open price values.
-NSString *const CPTTradingRangePlotBindingHighValues         = @"highValues";         ///< High price values.
-NSString *const CPTTradingRangePlotBindingLowValues          = @"lowValues";          ///< Low price values.
-NSString *const CPTTradingRangePlotBindingCloseValues        = @"closeValues";        ///< Close price values.
-NSString *const CPTTradingRangePlotBindingIncreaseFills      = @"increaseFills";      ///< Fills used with a candlestick plot when close >= open.
-NSString *const CPTTradingRangePlotBindingDecreaseFills      = @"decreaseFills";      ///< Fills used with a candlestick plot when close < open.
-NSString *const CPTTradingRangePlotBindingLineStyles         = @"lineStyles";         ///< Line styles used to draw candlestick or OHLC symbols.
-NSString *const CPTTradingRangePlotBindingIncreaseLineStyles = @"increaseLineStyles"; ///< Line styles used to outline candlestick symbols when close >= open.
-NSString *const CPTTradingRangePlotBindingDecreaseLineStyles = @"decreaseLineStyles"; ///< Line styles used to outline candlestick symbols when close < open.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingXValues            = @"xValues";            ///< X values.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingOpenValues         = @"openValues";         ///< Open price values.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingHighValues         = @"highValues";         ///< High price values.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingLowValues          = @"lowValues";          ///< Low price values.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingCloseValues        = @"closeValues";        ///< Close price values.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingIncreaseFills      = @"increaseFills";      ///< Fills used with a candlestick plot when close >= open.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingDecreaseFills      = @"decreaseFills";      ///< Fills used with a candlestick plot when close < open.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingLineStyles         = @"lineStyles";         ///< Line styles used to draw candlestick or OHLC symbols.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingIncreaseLineStyles = @"increaseLineStyles"; ///< Line styles used to outline candlestick symbols when close >= open.
+CPTTradingRangePlotBinding const CPTTradingRangePlotBindingDecreaseLineStyles = @"decreaseLineStyles"; ///< Line styles used to outline candlestick symbols when close < open.
 
 static const CPTCoordinate independentCoord = CPTCoordinateX;
 static const CPTCoordinate dependentCoord   = CPTCoordinateY;
@@ -43,27 +43,27 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 /// @cond
 @interface CPTTradingRangePlot()
 
-@property (nonatomic, readwrite, copy) CPTMutableNumericData *xValues;
-@property (nonatomic, readwrite, copy) CPTMutableNumericData *openValues;
-@property (nonatomic, readwrite, copy) CPTMutableNumericData *highValues;
-@property (nonatomic, readwrite, copy) CPTMutableNumericData *lowValues;
-@property (nonatomic, readwrite, copy) CPTMutableNumericData *closeValues;
-@property (nonatomic, readwrite, copy) NSArray *increaseFills;
-@property (nonatomic, readwrite, copy) NSArray *decreaseFills;
-@property (nonatomic, readwrite, copy) NSArray *lineStyles;
-@property (nonatomic, readwrite, copy) NSArray *increaseLineStyles;
-@property (nonatomic, readwrite, copy) NSArray *decreaseLineStyles;
+@property (nonatomic, readwrite, copy, nullable) CPTMutableNumericData *xValues;
+@property (nonatomic, readwrite, copy, nullable) CPTMutableNumericData *openValues;
+@property (nonatomic, readwrite, copy, nullable) CPTMutableNumericData *highValues;
+@property (nonatomic, readwrite, copy, nullable) CPTMutableNumericData *lowValues;
+@property (nonatomic, readwrite, copy, nullable) CPTMutableNumericData *closeValues;
+@property (nonatomic, readwrite, copy, nullable) CPTFillArray *increaseFills;
+@property (nonatomic, readwrite, copy, nullable) CPTFillArray *decreaseFills;
+@property (nonatomic, readwrite, copy, nullable) CPTLineStyleArray *lineStyles;
+@property (nonatomic, readwrite, copy, nullable) CPTLineStyleArray *increaseLineStyles;
+@property (nonatomic, readwrite, copy, nullable) CPTLineStyleArray *decreaseLineStyles;
 @property (nonatomic, readwrite, assign) NSUInteger pointingDeviceDownIndex;
 
--(void)drawCandleStickInContext:(CGContextRef)context atIndex:(NSUInteger)idx x:(CGFloat)x open:(CGFloat)openValue close:(CGFloat)closeValue high:(CGFloat)highValue low:(CGFloat)lowValue alignPoints:(BOOL)alignPoints;
--(void)drawOHLCInContext:(CGContextRef)context atIndex:(NSUInteger)idx x:(CGFloat)x open:(CGFloat)openValue close:(CGFloat)closeValue high:(CGFloat)highValue low:(CGFloat)lowValue alignPoints:(BOOL)alignPoints;
+-(void)drawCandleStickInContext:(nonnull CGContextRef)context atIndex:(NSUInteger)idx x:(CGFloat)x open:(CGFloat)openValue close:(CGFloat)closeValue high:(CGFloat)highValue low:(CGFloat)lowValue alignPoints:(BOOL)alignPoints;
+-(void)drawOHLCInContext:(nonnull CGContextRef)context atIndex:(NSUInteger)idx x:(CGFloat)x open:(CGFloat)openValue close:(CGFloat)closeValue high:(CGFloat)highValue low:(CGFloat)lowValue alignPoints:(BOOL)alignPoints;
 
--(CPTFill *)increaseFillForIndex:(NSUInteger)idx;
--(CPTFill *)decreaseFillForIndex:(NSUInteger)idx;
+-(nullable CPTFill *)increaseFillForIndex:(NSUInteger)idx;
+-(nullable CPTFill *)decreaseFillForIndex:(NSUInteger)idx;
 
--(CPTLineStyle *)lineStyleForIndex:(NSUInteger)idx;
--(CPTLineStyle *)increaseLineStyleForIndex:(NSUInteger)idx;
--(CPTLineStyle *)decreaseLineStyleForIndex:(NSUInteger)idx;
+-(nullable CPTLineStyle *)lineStyleForIndex:(NSUInteger)idx;
+-(nullable CPTLineStyle *)increaseLineStyleForIndex:(NSUInteger)idx;
+-(nullable CPTLineStyle *)decreaseLineStyleForIndex:(NSUInteger)idx;
 
 @end
 
@@ -91,29 +91,29 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 @dynamic increaseLineStyles;
 @dynamic decreaseLineStyles;
 
-/** @property CPTLineStyle *lineStyle
+/** @property nullable CPTLineStyle *lineStyle
  *  @brief The line style used to draw candlestick or OHLC symbols.
  **/
 @synthesize lineStyle;
 
-/** @property CPTLineStyle *increaseLineStyle
- *  @brief The line style used to outline candlestick symbols when close >= open.
+/** @property nullable CPTLineStyle *increaseLineStyle
+ *  @brief The line style used to outline candlestick symbols or draw OHLC symbols when close >= open.
  *  If @nil, will use @ref lineStyle instead.
  **/
 @synthesize increaseLineStyle;
 
-/** @property CPTLineStyle *decreaseLineStyle
- *  @brief The line style used to outline candlestick symbols when close < open.
+/** @property nullable CPTLineStyle *decreaseLineStyle
+ *  @brief The line style used to outline candlestick symbols or draw OHLC symbols when close < open.
  *  If @nil, will use @ref lineStyle instead.
  **/
 @synthesize decreaseLineStyle;
 
-/** @property CPTFill *increaseFill
+/** @property nullable CPTFill *increaseFill
  *  @brief The fill used with a candlestick plot when close >= open.
  **/
 @synthesize increaseFill;
 
-/** @property CPTFill *decreaseFill
+/** @property nullable CPTFill *decreaseFill
  *  @brief The fill used with a candlestick plot when close < open.
  **/
 @synthesize decreaseFill;
@@ -142,6 +142,12 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
  **/
 @synthesize barCornerRadius;
 
+/** @property BOOL showBarBorder
+ *  @brief If @YES, the candlestick body will show a border.
+ *  @ingroup plotAnimationTradingRangePlot
+ **/
+@synthesize showBarBorder;
+
 /** @internal
  *  @property NSUInteger pointingDeviceDownIndex
  *  @brief The index that was selected on the pointing device down event.
@@ -153,7 +159,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 /// @cond
 
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
+#if TARGET_OS_SIMULATOR || TARGET_OS_IPHONE
 #else
 +(void)initialize
 {
@@ -189,12 +195,13 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
  *  - @ref barWidth = @num{5.0}
  *  - @ref stickLength = @num{3.0}
  *  - @ref barCornerRadius = @num{0.0}
+ *  - @ref showBarBorder = @YES
  *  - @ref labelField = #CPTTradingRangePlotFieldClose
  *
  *  @param newFrame The frame rectangle.
  *  @return The initialized CPTTradingRangePlot object.
  **/
--(instancetype)initWithFrame:(CGRect)newFrame
+-(nonnull instancetype)initWithFrame:(CGRect)newFrame
 {
     if ( (self = [super initWithFrame:newFrame]) ) {
         plotStyle         = CPTTradingRangePlotStyleOHLC;
@@ -206,6 +213,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
         barWidth          = CPTFloat(5.0);
         stickLength       = CPTFloat(3.0);
         barCornerRadius   = CPTFloat(0.0);
+        showBarBorder     = YES;
 
         pointingDeviceDownIndex = NSNotFound;
 
@@ -218,7 +226,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 /// @cond
 
--(instancetype)initWithLayer:(id)layer
+-(nonnull instancetype)initWithLayer:(nonnull id)layer
 {
     if ( (self = [super initWithLayer:layer]) ) {
         CPTTradingRangePlot *theLayer = (CPTTradingRangePlot *)layer;
@@ -232,6 +240,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
         barWidth          = theLayer->barWidth;
         stickLength       = theLayer->stickLength;
         barCornerRadius   = theLayer->barCornerRadius;
+        showBarBorder     = theLayer->showBarBorder;
 
         pointingDeviceDownIndex = NSNotFound;
     }
@@ -245,7 +254,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 /// @cond
 
--(void)encodeWithCoder:(NSCoder *)coder
+-(void)encodeWithCoder:(nonnull NSCoder *)coder
 {
     [super encodeWithCoder:coder];
 
@@ -258,27 +267,46 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     [coder encodeCGFloat:self.barWidth forKey:@"CPTTradingRangePlot.barWidth"];
     [coder encodeCGFloat:self.stickLength forKey:@"CPTTradingRangePlot.stickLength"];
     [coder encodeCGFloat:self.barCornerRadius forKey:@"CPTTradingRangePlot.barCornerRadius"];
+    [coder encodeBool:self.showBarBorder forKey:@"CPTTradingRangePlot.showBarBorder"];
 
     // No need to archive these properties:
     // pointingDeviceDownIndex
 }
 
--(instancetype)initWithCoder:(NSCoder *)coder
+-(nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
 {
     if ( (self = [super initWithCoder:coder]) ) {
-        lineStyle         = [[coder decodeObjectForKey:@"CPTTradingRangePlot.lineStyle"] copy];
-        increaseLineStyle = [[coder decodeObjectForKey:@"CPTTradingRangePlot.increaseLineStyle"] copy];
-        decreaseLineStyle = [[coder decodeObjectForKey:@"CPTTradingRangePlot.decreaseLineStyle"] copy];
-        increaseFill      = [[coder decodeObjectForKey:@"CPTTradingRangePlot.increaseFill"] copy];
-        decreaseFill      = [[coder decodeObjectForKey:@"CPTTradingRangePlot.decreaseFill"] copy];
-        plotStyle         = (CPTTradingRangePlotStyle)[coder decodeIntegerForKey : @"CPTTradingRangePlot.plotStyle"];
-        barWidth          = [coder decodeCGFloatForKey:@"CPTTradingRangePlot.barWidth"];
-        stickLength       = [coder decodeCGFloatForKey:@"CPTTradingRangePlot.stickLength"];
-        barCornerRadius   = [coder decodeCGFloatForKey:@"CPTTradingRangePlot.barCornerRadius"];
+        lineStyle = [[coder decodeObjectOfClass:[CPTLineStyle class]
+                                         forKey:@"CPTTradingRangePlot.lineStyle"] copy];
+        increaseLineStyle = [[coder decodeObjectOfClass:[CPTLineStyle class]
+                                                 forKey:@"CPTTradingRangePlot.increaseLineStyle"] copy];
+        decreaseLineStyle = [[coder decodeObjectOfClass:[CPTLineStyle class]
+                                                 forKey:@"CPTTradingRangePlot.decreaseLineStyle"] copy];
+        increaseFill = [[coder decodeObjectOfClass:[CPTFill class]
+                                            forKey:@"CPTTradingRangePlot.increaseFill"] copy];
+        decreaseFill = [[coder decodeObjectOfClass:[CPTFill class]
+                                            forKey:@"CPTTradingRangePlot.decreaseFill"] copy];
+        plotStyle       = (CPTTradingRangePlotStyle)[coder decodeIntegerForKey:@"CPTTradingRangePlot.plotStyle"];
+        barWidth        = [coder decodeCGFloatForKey:@"CPTTradingRangePlot.barWidth"];
+        stickLength     = [coder decodeCGFloatForKey:@"CPTTradingRangePlot.stickLength"];
+        barCornerRadius = [coder decodeCGFloatForKey:@"CPTTradingRangePlot.barCornerRadius"];
+        showBarBorder   = [coder decodeBoolForKey:@"CPTTradingRangePlot.showBarBorder"];
 
         pointingDeviceDownIndex = NSNotFound;
     }
     return self;
+}
+
+/// @endcond
+
+#pragma mark -
+#pragma mark NSSecureCoding Methods
+
+/// @cond
+
++(BOOL)supportsSecureCoding
+{
+    return YES;
 }
 
 /// @endcond
@@ -358,9 +386,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     else if ( [theDataSource respondsToSelector:@selector(increaseFillForTradingRangePlot:recordIndex:)] ) {
         needsLegendUpdate = YES;
 
-        id nilObject          = [CPTPlot nilData];
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
-        NSUInteger maxIndex   = NSMaxRange(indexRange);
+        id nilObject               = [CPTPlot nilData];
+        CPTMutableFillArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
+        NSUInteger maxIndex        = NSMaxRange(indexRange);
 
         for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
             CPTFill *dataSourceFill = [theDataSource increaseFillForTradingRangePlot:self recordIndex:idx];
@@ -386,9 +414,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     else if ( [theDataSource respondsToSelector:@selector(decreaseFillForTradingRangePlot:recordIndex:)] ) {
         needsLegendUpdate = YES;
 
-        id nilObject          = [CPTPlot nilData];
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
-        NSUInteger maxIndex   = NSMaxRange(indexRange);
+        id nilObject               = [CPTPlot nilData];
+        CPTMutableFillArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
+        NSUInteger maxIndex        = NSMaxRange(indexRange);
 
         for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
             CPTFill *dataSourceFill = [theDataSource decreaseFillForTradingRangePlot:self recordIndex:idx];
@@ -439,9 +467,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     else if ( [theDataSource respondsToSelector:@selector(lineStyleForTradingRangePlot:recordIndex:)] ) {
         needsLegendUpdate = YES;
 
-        id nilObject          = [CPTPlot nilData];
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
-        NSUInteger maxIndex   = NSMaxRange(indexRange);
+        id nilObject                    = [CPTPlot nilData];
+        CPTMutableLineStyleArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
+        NSUInteger maxIndex             = NSMaxRange(indexRange);
 
         for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
             CPTLineStyle *dataSourceLineStyle = [theDataSource lineStyleForTradingRangePlot:self recordIndex:idx];
@@ -467,9 +495,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     else if ( [theDataSource respondsToSelector:@selector(increaseLineStyleForTradingRangePlot:recordIndex:)] ) {
         needsLegendUpdate = YES;
 
-        id nilObject          = [CPTPlot nilData];
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
-        NSUInteger maxIndex   = NSMaxRange(indexRange);
+        id nilObject                    = [CPTPlot nilData];
+        CPTMutableLineStyleArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
+        NSUInteger maxIndex             = NSMaxRange(indexRange);
 
         for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
             CPTLineStyle *dataSourceLineStyle = [theDataSource increaseLineStyleForTradingRangePlot:self recordIndex:idx];
@@ -495,9 +523,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     else if ( [theDataSource respondsToSelector:@selector(decreaseLineStyleForTradingRangePlot:recordIndex:)] ) {
         needsLegendUpdate = YES;
 
-        id nilObject          = [CPTPlot nilData];
-        NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
-        NSUInteger maxIndex   = NSMaxRange(indexRange);
+        id nilObject                    = [CPTPlot nilData];
+        CPTMutableLineStyleArray *array = [[NSMutableArray alloc] initWithCapacity:indexRange.length];
+        NSUInteger maxIndex             = NSMaxRange(indexRange);
 
         for ( NSUInteger idx = indexRange.location; idx < maxIndex; idx++ ) {
             CPTLineStyle *dataSourceLineStyle = [theDataSource decreaseLineStyleForTradingRangePlot:self recordIndex:idx];
@@ -525,7 +553,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 /// @cond
 
--(void)renderAsVectorInContext:(CGContextRef)context
+-(void)renderAsVectorInContext:(nonnull CGContextRef)context
 {
     if ( self.hidden ) {
         return;
@@ -749,7 +777,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     CGContextEndTransparencyLayer(context);
 }
 
--(void)drawCandleStickInContext:(CGContextRef)context
+-(void)drawCandleStickInContext:(nonnull CGContextRef)context
                         atIndex:(NSUInteger)idx
                               x:(CGFloat)x
                            open:(CGFloat)openValue
@@ -773,30 +801,32 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
         }
         else {
             theBorderLineStyle = [self lineStyleForIndex:idx];
-            currentBarFill     = [CPTFill fillWithColor:theBorderLineStyle.lineColor];
+            CPTColor *lineColor = theBorderLineStyle.lineColor;
+            if ( lineColor ) {
+                currentBarFill = [CPTFill fillWithColor:lineColor];
+            }
         }
     }
+
+    CPTAlignPointFunction alignmentFunction = CPTAlignPointToUserSpace;
 
     BOOL hasLineStyle = [theBorderLineStyle isKindOfClass:[CPTLineStyle class]];
     if ( hasLineStyle ) {
         [theBorderLineStyle setLineStyleInContext:context];
-    }
 
-    BOOL alignToUserSpace = (theBorderLineStyle.lineWidth > 0.0);
+        CGFloat lineWidth = theBorderLineStyle.lineWidth;
+        if ( ( self.contentsScale > CPTFloat(1.0) ) && (round(lineWidth) == lineWidth) ) {
+            alignmentFunction = CPTAlignIntegralPointToUserSpace;
+        }
+    }
 
     // high - low only
     if ( hasLineStyle && !isnan(highValue) && !isnan(lowValue) && ( isnan(openValue) || isnan(closeValue) ) ) {
         CGPoint alignedHighPoint = CPTPointMake(x, highValue);
         CGPoint alignedLowPoint  = CPTPointMake(x, lowValue);
         if ( alignPoints ) {
-            if ( alignToUserSpace ) {
-                alignedHighPoint = CPTAlignPointToUserSpace(context, alignedHighPoint);
-                alignedLowPoint  = CPTAlignPointToUserSpace(context, alignedLowPoint);
-            }
-            else {
-                alignedHighPoint = CPTAlignIntegralPointToUserSpace(context, alignedHighPoint);
-                alignedLowPoint  = CPTAlignIntegralPointToUserSpace(context, alignedLowPoint);
-            }
+            alignedHighPoint = alignmentFunction(context, alignedHighPoint);
+            alignedLowPoint  = alignmentFunction(context, alignedLowPoint);
         }
 
         CGMutablePathRef path = CGPathCreateMutable();
@@ -822,12 +852,12 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
             CGPoint alignedPoint4 = CPTPointMake(x - halfBarWidth, closeValue);
             CGPoint alignedPoint5 = CPTPointMake(x - halfBarWidth, openValue);
             if ( alignPoints ) {
-                if ( alignToUserSpace ) {
-                    alignedPoint1 = CPTAlignPointToUserSpace(context, alignedPoint1);
-                    alignedPoint2 = CPTAlignPointToUserSpace(context, alignedPoint2);
-                    alignedPoint3 = CPTAlignPointToUserSpace(context, alignedPoint3);
-                    alignedPoint4 = CPTAlignPointToUserSpace(context, alignedPoint4);
-                    alignedPoint5 = CPTAlignPointToUserSpace(context, alignedPoint5);
+                if ( hasLineStyle && self.showBarBorder ) {
+                    alignedPoint1 = alignmentFunction(context, alignedPoint1);
+                    alignedPoint2 = alignmentFunction(context, alignedPoint2);
+                    alignedPoint3 = alignmentFunction(context, alignedPoint3);
+                    alignedPoint4 = alignmentFunction(context, alignedPoint4);
+                    alignedPoint5 = alignmentFunction(context, alignedPoint5);
                 }
                 else {
                     alignedPoint1 = CPTAlignIntegralPointToUserSpace(context, alignedPoint1);
@@ -838,9 +868,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
                 }
             }
 
-            if ( openValue == closeValue ) {
+            if ( hasLineStyle && (openValue == closeValue) ) {
                 // #285 Draw a cross with open/close values marked
-                const CGFloat halfLineWidth = CPTFloat(0.5) * self.lineStyle.lineWidth;
+                const CGFloat halfLineWidth = CPTFloat(0.5) * theBorderLineStyle.lineWidth;
 
                 alignedPoint1.y -= halfLineWidth;
                 alignedPoint2.y += halfLineWidth;
@@ -863,19 +893,18 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
             }
 
             if ( hasLineStyle ) {
+                if ( !self.showBarBorder ) {
+                    CGPathRelease(path);
+                    path = CGPathCreateMutable();
+                }
+
                 if ( !isnan(lowValue) ) {
                     if ( lowValue < MIN(openValue, closeValue) ) {
                         CGPoint alignedStartPoint = CPTPointMake( x, MIN(openValue, closeValue) );
                         CGPoint alignedLowPoint   = CPTPointMake(x, lowValue);
                         if ( alignPoints ) {
-                            if ( alignToUserSpace ) {
-                                alignedStartPoint = CPTAlignPointToUserSpace(context, alignedStartPoint);
-                                alignedLowPoint   = CPTAlignPointToUserSpace(context, alignedLowPoint);
-                            }
-                            else {
-                                alignedStartPoint = CPTAlignIntegralPointToUserSpace(context, alignedStartPoint);
-                                alignedLowPoint   = CPTAlignIntegralPointToUserSpace(context, alignedLowPoint);
-                            }
+                            alignedStartPoint = alignmentFunction(context, alignedStartPoint);
+                            alignedLowPoint   = alignmentFunction(context, alignedLowPoint);
                         }
 
                         CGPathMoveToPoint(path, NULL, alignedStartPoint.x, alignedStartPoint.y);
@@ -887,14 +916,8 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
                         CGPoint alignedStartPoint = CPTPointMake( x, MAX(openValue, closeValue) );
                         CGPoint alignedHighPoint  = CPTPointMake(x, highValue);
                         if ( alignPoints ) {
-                            if ( alignToUserSpace ) {
-                                alignedStartPoint = CPTAlignPointToUserSpace(context, alignedStartPoint);
-                                alignedHighPoint  = CPTAlignPointToUserSpace(context, alignedHighPoint);
-                            }
-                            else {
-                                alignedStartPoint = CPTAlignIntegralPointToUserSpace(context, alignedStartPoint);
-                                alignedHighPoint  = CPTAlignIntegralPointToUserSpace(context, alignedHighPoint);
-                            }
+                            alignedStartPoint = alignmentFunction(context, alignedStartPoint);
+                            alignedHighPoint  = alignmentFunction(context, alignedHighPoint);
                         }
 
                         CGPathMoveToPoint(path, NULL, alignedStartPoint.x, alignedStartPoint.y);
@@ -911,7 +934,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)drawOHLCInContext:(CGContextRef)context
+-(void)drawOHLCInContext:(nonnull CGContextRef)context
                  atIndex:(NSUInteger)idx
                        x:(CGFloat)x
                     open:(CGFloat)openValue
@@ -922,17 +945,39 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 {
     CPTLineStyle *theLineStyle = [self lineStyleForIndex:idx];
 
+    if ( !isnan(openValue) && !isnan(closeValue) ) {
+        if ( openValue < closeValue ) {
+            CPTLineStyle *lineStyleForIncrease = [self increaseLineStyleForIndex:idx];
+            if ( [lineStyleForIncrease isKindOfClass:[CPTLineStyle class]] ) {
+                theLineStyle = lineStyleForIncrease;
+            }
+        }
+        else if ( openValue > closeValue ) {
+            CPTLineStyle *lineStyleForDecrease = [self decreaseLineStyleForIndex:idx];
+            if ( [lineStyleForDecrease isKindOfClass:[CPTLineStyle class]] ) {
+                theLineStyle = lineStyleForDecrease;
+            }
+        }
+    }
+
     if ( [theLineStyle isKindOfClass:[CPTLineStyle class]] ) {
         CGFloat theStickLength = self.stickLength;
         CGMutablePathRef path  = CGPathCreateMutable();
+
+        CPTAlignPointFunction alignmentFunction = CPTAlignPointToUserSpace;
+
+        CGFloat lineWidth = theLineStyle.lineWidth;
+        if ( ( self.contentsScale > CPTFloat(1.0) ) && (round(lineWidth) == lineWidth) ) {
+            alignmentFunction = CPTAlignIntegralPointToUserSpace;
+        }
 
         // high-low
         if ( !isnan(highValue) && !isnan(lowValue) ) {
             CGPoint alignedHighPoint = CPTPointMake(x, highValue);
             CGPoint alignedLowPoint  = CPTPointMake(x, lowValue);
             if ( alignPoints ) {
-                alignedHighPoint = CPTAlignPointToUserSpace(context, alignedHighPoint);
-                alignedLowPoint  = CPTAlignPointToUserSpace(context, alignedLowPoint);
+                alignedHighPoint = alignmentFunction(context, alignedHighPoint);
+                alignedLowPoint  = alignmentFunction(context, alignedLowPoint);
             }
             CGPathMoveToPoint(path, NULL, alignedHighPoint.x, alignedHighPoint.y);
             CGPathAddLineToPoint(path, NULL, alignedLowPoint.x, alignedLowPoint.y);
@@ -943,8 +988,8 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
             CGPoint alignedOpenStartPoint = CPTPointMake(x, openValue);
             CGPoint alignedOpenEndPoint   = CPTPointMake(x - theStickLength, openValue); // left side
             if ( alignPoints ) {
-                alignedOpenStartPoint = CPTAlignPointToUserSpace(context, alignedOpenStartPoint);
-                alignedOpenEndPoint   = CPTAlignPointToUserSpace(context, alignedOpenEndPoint);
+                alignedOpenStartPoint = alignmentFunction(context, alignedOpenStartPoint);
+                alignedOpenEndPoint   = alignmentFunction(context, alignedOpenEndPoint);
             }
             CGPathMoveToPoint(path, NULL, alignedOpenStartPoint.x, alignedOpenStartPoint.y);
             CGPathAddLineToPoint(path, NULL, alignedOpenEndPoint.x, alignedOpenEndPoint.y);
@@ -955,8 +1000,8 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
             CGPoint alignedCloseStartPoint = CPTPointMake(x, closeValue);
             CGPoint alignedCloseEndPoint   = CPTPointMake(x + theStickLength, closeValue); // right side
             if ( alignPoints ) {
-                alignedCloseStartPoint = CPTAlignPointToUserSpace(context, alignedCloseStartPoint);
-                alignedCloseEndPoint   = CPTAlignPointToUserSpace(context, alignedCloseEndPoint);
+                alignedCloseStartPoint = alignmentFunction(context, alignedCloseStartPoint);
+                alignedCloseEndPoint   = alignmentFunction(context, alignedCloseEndPoint);
             }
             CGPathMoveToPoint(path, NULL, alignedCloseStartPoint.x, alignedCloseStartPoint.y);
             CGPathAddLineToPoint(path, NULL, alignedCloseEndPoint.x, alignedCloseEndPoint.y);
@@ -970,7 +1015,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)drawSwatchForLegend:(CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(CGContextRef)context
+-(void)drawSwatchForLegend:(nonnull CPTLegend *)legend atIndex:(NSUInteger)idx inRect:(CGRect)rect inContext:(nonnull CGContextRef)context
 {
     [super drawSwatchForLegend:legend atIndex:idx inRect:rect inContext:context];
 
@@ -1003,7 +1048,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(CPTFill *)increaseFillForIndex:(NSUInteger)idx
+-(nullable CPTFill *)increaseFillForIndex:(NSUInteger)idx
 {
     CPTFill *theFill = [self cachedValueForKey:CPTTradingRangePlotBindingIncreaseFills recordIndex:idx];
 
@@ -1014,7 +1059,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     return theFill;
 }
 
--(CPTFill *)decreaseFillForIndex:(NSUInteger)idx
+-(nullable CPTFill *)decreaseFillForIndex:(NSUInteger)idx
 {
     CPTFill *theFill = [self cachedValueForKey:CPTTradingRangePlotBindingDecreaseFills recordIndex:idx];
 
@@ -1025,7 +1070,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     return theFill;
 }
 
--(CPTLineStyle *)lineStyleForIndex:(NSUInteger)idx
+-(nullable CPTLineStyle *)lineStyleForIndex:(NSUInteger)idx
 {
     CPTLineStyle *theLineStyle = [self cachedValueForKey:CPTTradingRangePlotBindingLineStyles recordIndex:idx];
 
@@ -1036,7 +1081,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     return theLineStyle;
 }
 
--(CPTLineStyle *)increaseLineStyleForIndex:(NSUInteger)idx
+-(nullable CPTLineStyle *)increaseLineStyleForIndex:(NSUInteger)idx
 {
     CPTLineStyle *theLineStyle = [self cachedValueForKey:CPTTradingRangePlotBindingIncreaseLineStyles recordIndex:idx];
 
@@ -1051,7 +1096,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     return theLineStyle;
 }
 
--(CPTLineStyle *)decreaseLineStyleForIndex:(NSUInteger)idx
+-(nullable CPTLineStyle *)decreaseLineStyleForIndex:(NSUInteger)idx
 {
     CPTLineStyle *theLineStyle = [self cachedValueForKey:CPTTradingRangePlotBindingDecreaseLineStyles recordIndex:idx];
 
@@ -1073,15 +1118,16 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 /// @cond
 
-+(BOOL)needsDisplayForKey:(NSString *)aKey
++(BOOL)needsDisplayForKey:(nonnull NSString *)aKey
 {
-    static NSSet *keys = nil;
-    static dispatch_once_t onceToken;
+    static NSSet<NSString *> *keys   = nil;
+    static dispatch_once_t onceToken = 0;
 
     dispatch_once(&onceToken, ^{
         keys = [NSSet setWithArray:@[@"barWidth",
                                      @"stickLength",
-                                     @"barCornerRadius"]];
+                                     @"barCornerRadius",
+                                     @"showBarBorder"]];
     });
 
     if ( [keys containsObject:aKey] ) {
@@ -1104,7 +1150,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     return 5;
 }
 
--(NSArray *)fieldIdentifiers
+-(nonnull CPTNumberArray *)fieldIdentifiers
 {
     return @[@(CPTTradingRangePlotFieldX),
              @(CPTTradingRangePlotFieldOpen),
@@ -1113,9 +1159,9 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
              @(CPTTradingRangePlotFieldLow)];
 }
 
--(NSArray *)fieldIdentifiersForCoordinate:(CPTCoordinate)coord
+-(nonnull CPTNumberArray *)fieldIdentifiersForCoordinate:(CPTCoordinate)coord
 {
-    NSArray *result = nil;
+    CPTNumberArray *result = nil;
 
     switch ( coord ) {
         case CPTCoordinateX:
@@ -1166,24 +1212,24 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
 
 /// @cond
 
--(void)positionLabelAnnotation:(CPTPlotSpaceAnnotation *)label forIndex:(NSUInteger)idx
+-(void)positionLabelAnnotation:(nonnull CPTPlotSpaceAnnotation *)label forIndex:(NSUInteger)idx
 {
     BOOL positiveDirection = YES;
     CPTPlotRange *yRange   = [self.plotSpace plotRangeForCoordinate:CPTCoordinateY];
 
-    if ( CPTDecimalLessThan( yRange.length, CPTDecimalFromInteger(0) ) ) {
+    if ( CPTDecimalLessThan( yRange.lengthDecimal, CPTDecimalFromInteger(0) ) ) {
         positiveDirection = !positiveDirection;
     }
 
     NSNumber *xValue = [self cachedNumberForField:CPTTradingRangePlotFieldX recordIndex:idx];
     NSNumber *yValue;
-    NSArray *yValues = @[[self cachedNumberForField:CPTTradingRangePlotFieldOpen recordIndex:idx],
-                         [self cachedNumberForField:CPTTradingRangePlotFieldClose recordIndex:idx],
-                         [self cachedNumberForField:CPTTradingRangePlotFieldHigh recordIndex:idx],
-                         [self cachedNumberForField:CPTTradingRangePlotFieldLow recordIndex:idx]];
-    NSArray *yValuesSorted = [yValues sortedArrayUsingSelector:@selector(compare:)];
+    CPTNumberArray *yValues = @[[self cachedNumberForField:CPTTradingRangePlotFieldOpen recordIndex:idx],
+                                [self cachedNumberForField:CPTTradingRangePlotFieldClose recordIndex:idx],
+                                [self cachedNumberForField:CPTTradingRangePlotFieldHigh recordIndex:idx],
+                                [self cachedNumberForField:CPTTradingRangePlotFieldLow recordIndex:idx]];
+    CPTNumberArray *yValuesSorted = [yValues sortedArrayUsingSelector:@selector(compare:)];
     if ( positiveDirection ) {
-        yValue = [yValuesSorted lastObject];
+        yValue = yValuesSorted.lastObject;
     }
     else {
         yValue = yValuesSorted[0];
@@ -1229,7 +1275,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     CGFloat lastViewMax = CPTFloat(0.0);
 
     NSUInteger result              = NSNotFound;
-    CGFloat minimumDistanceSquared = NAN;
+    CGFloat minimumDistanceSquared = CPTNAN;
 
     if ( self.doublePrecisionCache ) {
         const double *locationBytes = (const double *)locations.data.bytes;
@@ -1464,7 +1510,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
  *  @param interactionPoint The coordinates of the interaction.
  *  @return Whether the event was handled or not.
  **/
--(BOOL)pointingDeviceDownEvent:(CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+-(BOOL)pointingDeviceDownEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
 {
     CPTGraph *theGraph       = self.graph;
     CPTPlotArea *thePlotArea = self.plotArea;
@@ -1473,7 +1519,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
         return NO;
     }
 
-    id<CPTTradingRangePlotDelegate> theDelegate = self.delegate;
+    id<CPTTradingRangePlotDelegate> theDelegate = (id<CPTTradingRangePlotDelegate>)self.delegate;
     if ( [theDelegate respondsToSelector:@selector(tradingRangePlot:barTouchDownAtRecordIndex:)] ||
          [theDelegate respondsToSelector:@selector(tradingRangePlot:barTouchDownAtRecordIndex:withEvent:)] ||
          [theDelegate respondsToSelector:@selector(tradingRangePlot:barWasSelectedAtRecordIndex:)] ||
@@ -1529,7 +1575,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
  *  @param interactionPoint The coordinates of the interaction.
  *  @return Whether the event was handled or not.
  **/
--(BOOL)pointingDeviceUpEvent:(CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
+-(BOOL)pointingDeviceUpEvent:(nonnull CPTNativeEvent *)event atPoint:(CGPoint)interactionPoint
 {
     NSUInteger selectedDownIndex = self.pointingDeviceDownIndex;
 
@@ -1542,7 +1588,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
         return NO;
     }
 
-    id<CPTTradingRangePlotDelegate> theDelegate = self.delegate;
+    id<CPTTradingRangePlotDelegate> theDelegate = (id<CPTTradingRangePlotDelegate>)self.delegate;
     if ( [theDelegate respondsToSelector:@selector(tradingRangePlot:barTouchUpAtRecordIndex:)] ||
          [theDelegate respondsToSelector:@selector(tradingRangePlot:barTouchUpAtRecordIndex:withEvent:)] ||
          [theDelegate respondsToSelector:@selector(tradingRangePlot:barWasSelectedAtRecordIndex:)] ||
@@ -1601,7 +1647,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)setLineStyle:(CPTLineStyle *)newLineStyle
+-(void)setLineStyle:(nullable CPTLineStyle *)newLineStyle
 {
     if ( lineStyle != newLineStyle ) {
         lineStyle = [newLineStyle copy];
@@ -1610,7 +1656,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)setIncreaseLineStyle:(CPTLineStyle *)newLineStyle
+-(void)setIncreaseLineStyle:(nullable CPTLineStyle *)newLineStyle
 {
     if ( increaseLineStyle != newLineStyle ) {
         increaseLineStyle = [newLineStyle copy];
@@ -1619,7 +1665,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)setDecreaseLineStyle:(CPTLineStyle *)newLineStyle
+-(void)setDecreaseLineStyle:(nullable CPTLineStyle *)newLineStyle
 {
     if ( decreaseLineStyle != newLineStyle ) {
         decreaseLineStyle = [newLineStyle copy];
@@ -1628,7 +1674,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)setIncreaseFill:(CPTFill *)newFill
+-(void)setIncreaseFill:(nullable CPTFill *)newFill
 {
     if ( increaseFill != newFill ) {
         increaseFill = [newFill copy];
@@ -1637,7 +1683,7 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)setDecreaseFill:(CPTFill *)newFill
+-(void)setDecreaseFill:(nullable CPTFill *)newFill
 {
     if ( decreaseFill != newFill ) {
         decreaseFill = [newFill copy];
@@ -1672,106 +1718,114 @@ static const CPTCoordinate dependentCoord   = CPTCoordinateY;
     }
 }
 
--(void)setXValues:(CPTMutableNumericData *)newValues
+-(void)setShowBarBorder:(BOOL)newShowBarBorder
+{
+    if ( showBarBorder != newShowBarBorder ) {
+        showBarBorder = newShowBarBorder;
+        [self setNeedsDisplay];
+    }
+}
+
+-(void)setXValues:(nullable CPTMutableNumericData *)newValues
 {
     [self cacheNumbers:newValues forField:CPTTradingRangePlotFieldX];
 }
 
--(CPTMutableNumericData *)xValues
+-(nullable CPTMutableNumericData *)xValues
 {
     return [self cachedNumbersForField:CPTTradingRangePlotFieldX];
 }
 
--(CPTMutableNumericData *)openValues
+-(nullable CPTMutableNumericData *)openValues
 {
     return [self cachedNumbersForField:CPTTradingRangePlotFieldOpen];
 }
 
--(void)setOpenValues:(CPTMutableNumericData *)newValues
+-(void)setOpenValues:(nullable CPTMutableNumericData *)newValues
 {
     [self cacheNumbers:newValues forField:CPTTradingRangePlotFieldOpen];
 }
 
--(CPTMutableNumericData *)highValues
+-(nullable CPTMutableNumericData *)highValues
 {
     return [self cachedNumbersForField:CPTTradingRangePlotFieldHigh];
 }
 
--(void)setHighValues:(CPTMutableNumericData *)newValues
+-(void)setHighValues:(nullable CPTMutableNumericData *)newValues
 {
     [self cacheNumbers:newValues forField:CPTTradingRangePlotFieldHigh];
 }
 
--(CPTMutableNumericData *)lowValues
+-(nullable CPTMutableNumericData *)lowValues
 {
     return [self cachedNumbersForField:CPTTradingRangePlotFieldLow];
 }
 
--(void)setLowValues:(CPTMutableNumericData *)newValues
+-(void)setLowValues:(nullable CPTMutableNumericData *)newValues
 {
     [self cacheNumbers:newValues forField:CPTTradingRangePlotFieldLow];
 }
 
--(CPTMutableNumericData *)closeValues
+-(nullable CPTMutableNumericData *)closeValues
 {
     return [self cachedNumbersForField:CPTTradingRangePlotFieldClose];
 }
 
--(void)setCloseValues:(CPTMutableNumericData *)newValues
+-(void)setCloseValues:(nullable CPTMutableNumericData *)newValues
 {
     [self cacheNumbers:newValues forField:CPTTradingRangePlotFieldClose];
 }
 
--(NSArray *)increaseFills
+-(nullable CPTFillArray *)increaseFills
 {
     return [self cachedArrayForKey:CPTTradingRangePlotBindingIncreaseFills];
 }
 
--(void)setIncreaseFills:(NSArray *)newFills
+-(void)setIncreaseFills:(nullable CPTFillArray *)newFills
 {
     [self cacheArray:newFills forKey:CPTTradingRangePlotBindingIncreaseFills];
     [self setNeedsDisplay];
 }
 
--(NSArray *)decreaseFills
+-(nullable CPTFillArray *)decreaseFills
 {
     return [self cachedArrayForKey:CPTTradingRangePlotBindingDecreaseFills];
 }
 
--(void)setDecreaseFills:(NSArray *)newFills
+-(void)setDecreaseFills:(nullable CPTFillArray *)newFills
 {
     [self cacheArray:newFills forKey:CPTTradingRangePlotBindingDecreaseFills];
     [self setNeedsDisplay];
 }
 
--(NSArray *)lineStyles
+-(nullable CPTLineStyleArray *)lineStyles
 {
     return [self cachedArrayForKey:CPTTradingRangePlotBindingLineStyles];
 }
 
--(void)setLineStyles:(NSArray *)newLineStyles
+-(void)setLineStyles:(nullable CPTLineStyleArray *)newLineStyles
 {
     [self cacheArray:newLineStyles forKey:CPTTradingRangePlotBindingLineStyles];
     [self setNeedsDisplay];
 }
 
--(NSArray *)increaseLineStyles
+-(nullable CPTLineStyleArray *)increaseLineStyles
 {
     return [self cachedArrayForKey:CPTTradingRangePlotBindingIncreaseLineStyles];
 }
 
--(void)setIncreaseLineStyles:(NSArray *)newLineStyles
+-(void)setIncreaseLineStyles:(nullable CPTLineStyleArray *)newLineStyles
 {
     [self cacheArray:newLineStyles forKey:CPTTradingRangePlotBindingIncreaseLineStyles];
     [self setNeedsDisplay];
 }
 
--(NSArray *)decreaseLineStyles
+-(nullable CPTLineStyleArray *)decreaseLineStyles
 {
     return [self cachedArrayForKey:CPTTradingRangePlotBindingDecreaseLineStyles];
 }
 
--(void)setDecreaseLineStyles:(NSArray *)newLineStyles
+-(void)setDecreaseLineStyles:(nullable CPTLineStyleArray *)newLineStyles
 {
     [self cacheArray:newLineStyles forKey:CPTTradingRangePlotBindingDecreaseLineStyles];
     [self setNeedsDisplay];

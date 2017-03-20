@@ -4,6 +4,6 @@
 
 @interface CPTXYPlotSpaceTests : CPTTestCase
 
-@property (strong, readwrite) CPTXYGraph *graph;
+@property (nonatomic, readwrite, strong, nullable) CPTXYGraph *graph;
 
 @end

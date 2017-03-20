@@ -1,9 +1,9 @@
 //
-//  StockPlotAppDelegate.m
-//  StockPlot
+// StockPlotAppDelegate.m
+// StockPlot
 //
-//  Created by Jonathan Saggau on 6/19/09.
-//  Copyright __MyCompanyName__ 2009. All rights reserved.
+// Created by Jonathan Saggau on 6/19/09.
+// Copyright __MyCompanyName__ 2009. All rights reserved.
 //
 
 #import "RootViewController.h"
@@ -17,32 +17,20 @@
 #pragma mark -
 #pragma mark Application lifecycle
 
--(void)applicationDidFinishLaunching:(UIApplication *)application
+-(void)applicationDidFinishLaunching:(nonnull UIApplication *)application
 {
-    [[self.navigationController navigationBar] setTintColor:[UIColor blackColor]];
+    self.navigationController.navigationBar.tintColor = [UIColor blackColor];
 
-    if ( [self.window respondsToSelector:@selector(setRootViewController:)] ) {
-        self.window.rootViewController = self.navigationController;
-    }
-    else {
-        [self.window addSubview:self.navigationController.view];
-    }
+    self.window.rootViewController = self.navigationController;
     [self.window makeKeyAndVisible];
 }
 
--(void)applicationWillTerminate:(UIApplication *)application
+-(void)applicationWillTerminate:(nonnull UIApplication *)application
 {
     // Save data if appropriate
 }
 
 #pragma mark -
 #pragma mark Memory management
-
--(void)dealloc
-{
-    [navigationController release];
-    [window release];
-    [super dealloc];
-}
 
 @end

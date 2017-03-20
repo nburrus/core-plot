@@ -10,7 +10,7 @@
  *  @param anImage The platform-native image.
  *  @return A CPTImage instance initialized with the provided image.
  **/
--(instancetype)initWithNativeImage:(CPTNativeImage *)anImage
+-(nonnull instancetype)initWithNativeImage:(nullable CPTNativeImage *)anImage
 {
     if ( (self = [self init]) ) {
         self.nativeImage = anImage;
@@ -28,34 +28,31 @@
  *  @param path The file system path of the file.
  *  @return A CPTImage instance initialized with the contents of the PNG file.
  **/
--(instancetype)initForPNGFile:(NSString *)path
+-(nonnull instancetype)initForPNGFile:(nonnull NSString *)path
 {
     CGFloat imageScale = CPTFloat(1.0);
 
     // Try to load @2x file if the system supports hi-dpi display
-    NSImage *newNativeImage = nil;
+    NSImage *newNativeImage = [[NSImage alloc] init];
     NSImageRep *imageRep    = nil;
 
     for ( NSScreen *screen in [NSScreen screens] ) {
         imageScale = MAX(imageScale, screen.backingScaleFactor);
     }
 
-    if ( imageScale > CPTFloat(1.0) ) {
+    while ( imageScale > CPTFloat(1.0) ) {
         NSMutableString *hiDpiPath = [path mutableCopy];
         NSUInteger replaceCount    = [hiDpiPath replaceOccurrencesOfString:@".png"
-                                                                withString:@"@2x.png"
+                                                                withString:[NSString stringWithFormat:@"@%dx.png", (int)imageScale]
                                                                    options:NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch
                                                                      range:NSMakeRange(hiDpiPath.length - 4, 4)];
         if ( replaceCount == 1 ) {
-            imageRep = [NSImageRep imageRepWithContentsOfFile:path];
+            imageRep = [NSImageRep imageRepWithContentsOfFile:hiDpiPath];
             if ( imageRep ) {
-                NSSize size = imageRep.size;
-                size.width   *= CPTFloat(0.5);
-                size.height  *= CPTFloat(0.5);
-                imageRep.size = size;
                 [newNativeImage addRepresentation:imageRep];
             }
         }
+        imageScale -= CPTFloat(1.0);
     }
 
     imageRep = [NSImageRep imageRepWithContentsOfFile:path];

@@ -1,23 +1,19 @@
 //
-//  RootViewController.h
-//  StockPlot
+// RootViewController.h
+// StockPlot
 //
-//  Created by Jonathan Saggau on 6/19/09.
-//  Copyright __MyCompanyName__ 2009. All rights reserved.
+// Created by Jonathan Saggau on 6/19/09.
+// Copyright __MyCompanyName__ 2009. All rights reserved.
 //
 #import <Foundation/Foundation.h>
 
 #import "APYahooDataPuller.h"
 #import "APYahooDataPullerGraph.h"
 
-@interface RootViewController : UITableViewController<APYahooDataPullerDelegate> {
-    @private
-    NSMutableArray *stocks;
-    APYahooDataPullerGraph *graph;
-}
+@interface RootViewController : UITableViewController<APYahooDataPullerDelegate>
 
-@property (nonatomic, readonly) NSArray *symbols;
+@property (nonatomic, readonly, strong, nonnull) CPTStringArray *symbols;
 
--(void)addSymbol:(NSString *)aSymbol;
+-(void)addSymbol:(nonnull NSString *)aSymbol;
 
 @end

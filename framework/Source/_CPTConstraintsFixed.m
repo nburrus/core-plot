@@ -30,7 +30,7 @@
  *  @param newOffset The offset.
  *  @return The initialized CPTConstraints object.
  **/
--(instancetype)initWithLowerOffset:(CGFloat)newOffset
+-(nonnull instancetype)initWithLowerOffset:(CGFloat)newOffset
 {
     if ( (self = [super init]) ) {
         offset         = newOffset;
@@ -44,7 +44,7 @@
  *  @param newOffset The offset.
  *  @return The initialized CPTConstraints object.
  **/
--(instancetype)initWithUpperOffset:(CGFloat)newOffset
+-(nonnull instancetype)initWithUpperOffset:(CGFloat)newOffset
 {
     if ( (self = [super init]) ) {
         offset         = newOffset;
@@ -57,7 +57,7 @@
 #pragma mark -
 #pragma mark Comparison
 
--(BOOL)isEqualToConstraint:(CPTConstraints *)otherConstraint
+-(BOOL)isEqualToConstraint:(nullable CPTConstraints *)otherConstraint
 {
     if ( [self class] != [otherConstraint class] ) {
         return NO;
@@ -95,7 +95,7 @@
 
 /// @cond
 
--(id)copyWithZone:(NSZone *)zone
+-(nonnull id)copyWithZone:(nullable NSZone *)zone
 {
     _CPTConstraintsFixed *copy = [[[self class] allocWithZone:zone] init];
 
@@ -112,24 +112,40 @@
 
 /// @cond
 
--(Class)classForCoder
+-(nonnull Class)classForCoder
 {
     return [CPTConstraints class];
 }
 
--(void)encodeWithCoder:(NSCoder *)coder
+-(void)encodeWithCoder:(nonnull NSCoder *)coder
 {
     [coder encodeCGFloat:self.offset forKey:@"_CPTConstraintsFixed.offset"];
     [coder encodeBool:self.isFixedToLower forKey:@"_CPTConstraintsFixed.isFixedToLower"];
 }
 
--(instancetype)initWithCoder:(NSCoder *)coder
+/// @endcond
+
+/** @brief Returns an object initialized from data in a given unarchiver.
+ *  @param coder An unarchiver object.
+ *  @return An object initialized from data in a given unarchiver.
+ */
+-(nullable instancetype)initWithCoder:(nonnull NSCoder *)coder
 {
     if ( (self = [super init]) ) {
         offset         = [coder decodeCGFloatForKey:@"_CPTConstraintsFixed.offset"];
         isFixedToLower = [coder decodeBoolForKey:@"_CPTConstraintsFixed.isFixedToLower"];
     }
     return self;
+}
+
+#pragma mark -
+#pragma mark NSSecureCoding Methods
+
+/// @cond
+
++(BOOL)supportsSecureCoding
+{
+    return YES;
 }
 
 /// @endcond
